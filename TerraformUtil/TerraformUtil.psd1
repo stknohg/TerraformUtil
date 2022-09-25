@@ -5,7 +5,7 @@
     Author               = 'Takuya Shibata'
     CompanyName          = 'Takuya Shibata'
     Copyright            = '(c) Takuya Shibata. All rights reserved.'
-    Description          = ''
+    Description          = 'PowerShell utility functions for Terraform.'
     PowerShellVersion    = '7.0.0'
     NestedModules        = @('TerraformUtil.psm1')
     FunctionsToExport    = @('Register-TFArgumentCompleter', 'UnRegister-TFArgumentCompleter', 'Find-TFRelease', 'Test-TFVersion', 'Save-TFWindowsBinary')
