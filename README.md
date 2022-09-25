@@ -1,6 +1,6 @@
 # TerraformUtil
 
-Utility PowerShell functions for [Terraform](https://www.terraform.io/).
+PowerShell utility functions for [Terraform](https://www.terraform.io/).
 
 ## Prerequisite
 
@@ -66,7 +66,8 @@ Version State     Created              Updated
 
 Save the specific version's Windows Terraform binary file (`terraform.exe`).  
 
-Note : This function is supported for Windows only.
+> **Warning**  
+> This function is supported for Windows only.
 
 ```powershell
 # save the latest binary file (terraform.exe) to "C:\hashicorp\terraform" folder
@@ -75,3 +76,7 @@ Save-TFWindowsBinary -Latest -DestinationPath C:\hashicorp\terraform
 # save the ver.1.2.9 binary file to "C:\hashicorp\terraform" folder
 Save-TFWindowsBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
 ```
+
+## License
+
+* [MIT](./LICENSE)
