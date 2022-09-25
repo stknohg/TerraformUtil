@@ -1,0 +1,34 @@
+# build workflow
+name: build
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+jobs:
+  # Pester test job
+  pester-test:
+    runs-on: windows-2022
+    steps:
+      # checkout
+      - uses: actions/checkout@v2
+      # Runs Pester all *.tests.ps1 scripts
+      - name: Run Pester tests
+        run: |
+          Write-Output "Run Pester $(Get-InstalledModule Pester | Select-Object -ExpandProperty Version) ..."
+          $config = [PesterConfiguration]@{
+              Run = @{
+                  Path = './TerraformUtil.Tests/'
+                  # TestExtension is default setting (.Tests.ps1)
+              }
+              Output = @{
+                  Verbosity = 'Detailed'
+              }
+          }
+          Invoke-Pester -Configuration $config
+        shell: pwsh
