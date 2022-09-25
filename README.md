@@ -70,7 +70,7 @@ Version State     Created              Updated
 
 ### Save-TFWindowsBinary
 
-Save the specific version's Windows Terraform binary file (`terraform.exe`).  
+Save the specific version Windows Terraform binary file (`terraform.exe`).  
 
 > **Warning**  
 > This function is supported for Windows only.
@@ -81,6 +81,21 @@ Save-TFWindowsBinary -Latest -DestinationPath C:\hashicorp\terraform
 
 # save the ver.1.2.9 binary file to "C:\hashicorp\terraform" folder
 Save-TFWindowsBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
+```
+
+### Save-TFWindowsLinterBinary
+
+Save the specific version [linter](https://github.com/terraform-linters/tflint) binary file (`tflint.exe`).  
+
+> **Warning**  
+> This function is supported for Windows only.
+
+```powershell
+# save the latest linter binary file (tflint.exe) to "C:\hashicorp\terraform" folder
+Save-TFWindowsLinterBinary -Latest -DestinationPath C:\hashicorp\terraform
+
+# save the ver.0.40.0 binary file to "C:\hashicorp\terraform" folder
+Save-TFWindowsLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
 ```
 
 ## License

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Save the specific version's Windows Terraform binary file.
+    Save the specific version Windows Terraform binary file.
 #>
 function Save-TFWindowsBinary {
     [CmdletBinding(DefaultParameterSetName = 'Latest')]
@@ -53,10 +53,10 @@ function Save-TFWindowsBinary {
     try {
         # download
         WriteInfo ("Download {0}" -f ($build.Url))
-        WriteInfo ("  to {0} ..." -f ($tempPath))
+        WriteInfo ("  to {0}" -f ($tempPath))
         $build.Download($tempPath)
         # expand
-        WriteInfo ("Expand {0} to {1} ..." -f $zipFileName, $DestinationPath)
+        WriteInfo ("Expand {0} to {1}" -f $zipFileName, $DestinationPath)
         Expand-Archive -LiteralPath $zipFullPath -DestinationPath $DestinationPath -Force
         # success
         WriteInfo ("Binary file is saved to {0}" -f $DestinationPath)

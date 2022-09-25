@@ -8,7 +8,9 @@
     Description          = 'PowerShell utility functions for Terraform.'
     PowerShellVersion    = '7.0.0'
     NestedModules        = @('TerraformUtil.psm1')
-    FunctionsToExport    = @('Register-TFArgumentCompleter', 'UnRegister-TFArgumentCompleter', 'Find-TFRelease', 'Test-TFVersion', 'Save-TFWindowsBinary')
+    FunctionsToExport    = @('Register-TFArgumentCompleter', 'UnRegister-TFArgumentCompleter',
+                             'Find-TFRelease', 'Test-TFVersion',
+                             'Save-TFWindowsBinary', 'Save-TFWindowsLinterBinary')
     FormatsToProcess     = @('TerraformUtil.format.ps1xml')
     PrivateData = @{
         PSData = @{
