@@ -10,7 +10,11 @@ Terraform binary is installed to the PATH.
 
 ## How to install
 
-* WIP : It will be installable from PowerShell Gallery
+You can install it from [PowerShell gallery](https://www.powershellgallery.com/packages/TerraformUtil/).
+
+```powershell
+Install-Module -Name TerraformUtil
+```
 
 ## Functions
 
