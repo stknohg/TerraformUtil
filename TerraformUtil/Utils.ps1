@@ -71,8 +71,8 @@ function IsCurrentProcess64bit () {
 
 function IsTerraformInstalled () {
     try {
-        [void](Get-Command -Name 'terraform' -CommandType Application)
-        return $true
+        $cmd = Get-Command -Name 'terraform' -CommandType Application -ErrorAction SilentlyContinue
+        return (-not ($null -eq $cmd))
     } catch {
         return $false
     }
@@ -80,9 +80,13 @@ function IsTerraformInstalled () {
 
 function GetInstalledTerraformVersion () {
     try {
-        $match = terraform version | Select-String 'Terraform v' -SimpleMatch
+        $match = InvokeTerraformVersion | Select-String 'Terraform v' -SimpleMatch
         return [semver]($match.ToString() -split 'Terraform v')[1]
     } catch {
         return $null
     }
+}
+function InvokeTerraformVersion () {
+   # function for mocking
+   return terraform version
 }
