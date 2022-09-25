@@ -10,6 +10,7 @@ function Find-TFRelease {
         [Parameter(ParameterSetName = 'Latest', Mandatory = $true)]
         [Switch]$Latest,
         [Parameter(ParameterSetName = 'Default')]
+        [ValidateRange(1, 20)]
         [int]$MaxItems = 10
     )
     begin {
@@ -17,34 +18,36 @@ function Find-TFRelease {
         if ($MaxItems -gt 20) {
             $MaxItems = 20
         }
-        if ($MaxItems -lt 0) {
+        if ($MaxItems -le 0) {
             $MaxItems = 10
         }
     }
     process {
-        $response = switch ($PSCmdlet.ParameterSetName) {
+        $uri = switch ($PSCmdlet.ParameterSetName) {
             'Latest' {
-                Invoke-RestMethod -Uri "https://api.releases.hashicorp.com/v1/releases/terraform/latest"
+                "https://api.releases.hashicorp.com/v1/releases/terraform/latest"
             }
             'Version' {
-                Invoke-RestMethod -Uri "https://api.releases.hashicorp.com/v1/releases/terraform/$Version"
+                "https://api.releases.hashicorp.com/v1/releases/terraform/$Version"
             }
             Default {
-                Invoke-RestMethod -Uri "https://api.releases.hashicorp.com/v1/releases/terraform/?limit=$MaxItems"
+                "https://api.releases.hashicorp.com/v1/releases/terraform/?limit=$MaxItems"
             }
+        }
+        try {
+            $response = Invoke-RestMethod -Uri $uri
+        } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+            Write-Warning ("StatusCode : {0} {1}" -f  [int]$_.Exception.Response.StatusCode, $_)
+            return
+        } catch {
+            Write-Error $_
+            return
         }
 
         # output object
         $objectsForOutput = [System.Collections.ArrayList]::new()
         foreach ($r in $response) {
             $obj = ConvertResponseItemToObject -ResponseItem $r
-            # excude pre release version by default
-            if ($PSCmdlet.ParameterSetName -eq 'Default') {
-                if (-not $IncludePreRelease -and $obj.PreRelease) {
-                    Write-Verbose "-IncludePreRelease filter excludes version $($obj.Version)"
-                    continue
-                }
-            }
             [void]$objectsForOutput.Add($obj)
         }
     }
