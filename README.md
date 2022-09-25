@@ -1,5 +1,7 @@
 # TerraformUtil
 
+![build](https://github.com/stknohg/TerraformUtil/workflows/build/badge.svg)
+
 PowerShell utility functions for [Terraform](https://www.terraform.io/).
 
 ## Prerequisite
