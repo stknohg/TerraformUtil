@@ -20,6 +20,9 @@ jobs:
       # Runs Pester all *.tests.ps1 scripts
       - name: Run Pester tests
         run: |
+          # Install the latest Pester module
+          Install-Module Pester -Force
+          Import-Module Pester
           Write-Output "Run Pester $(Get-InstalledModule Pester | Select-Object -ExpandProperty Version) ..."
           $config = [PesterConfiguration]@{
               Run = @{
