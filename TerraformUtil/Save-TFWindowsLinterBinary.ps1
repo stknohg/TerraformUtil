@@ -44,11 +44,14 @@ You can use "brew install tflint" instead.
         'Version' {
             "https://api.github.com/repos/terraform-linters/tflint/releases/tags/v$Version"
         }
+        default {
+            'https://api.github.com/repos/terraform-linters/tflint/releases/latest'
+        }
     }
     try {
         $response = Invoke-RestMethod -Uri $uri -Headers @{ Accept = 'application/vnd.github.v3+json' }
     } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-        Write-Warning ("StatusCode : {0} {1}" -f  [int]$_.Exception.Response.StatusCode, $_)
+        Write-Error ("StatusCode : {0} {1}" -f  [int]$_.Exception.Response.StatusCode, $_)
         return
     } catch {
         Write-Error $_
