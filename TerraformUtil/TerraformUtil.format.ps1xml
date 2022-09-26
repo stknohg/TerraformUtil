@@ -59,6 +59,9 @@
                     <ListEntry>
                         <ListItems>
                             <ListItem>
+                                <PropertyName>Name</PropertyName>
+                            </ListItem>
+                            <ListItem>
                                 <PropertyName>Version</PropertyName>
                             </ListItem>
                             <ListItem>
@@ -74,16 +77,25 @@
                                 <PropertyName>Updated</PropertyName>
                             </ListItem>
                             <ListItem>
+                                <PropertyName>LicenseClass</PropertyName>
+                            </ListItem>
+                            <ListItem>
                                 <PropertyName>ChangeLogUrl</PropertyName>
                             </ListItem>
                             <ListItem>
                                 <PropertyName>LicenseUrl</PropertyName>
                             </ListItem>
                             <ListItem>
+                                <PropertyName>ProjectWebSiteUrl</PropertyName>
+                            </ListItem>
+                            <ListItem>
                                 <PropertyName>DockerHubUrl</PropertyName>
                             </ListItem>
                             <ListItem>
                                 <PropertyName>AmazonECRUrl</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>SourceRepositoryUrl</PropertyName>
                             </ListItem>
                             <ListItem>
                                 <PropertyName>SHA256SUMsUrl</PropertyName>

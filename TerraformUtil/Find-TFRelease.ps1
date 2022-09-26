@@ -37,7 +37,7 @@ function Find-TFRelease {
         try {
             $response = Invoke-RestMethod -Uri $uri
         } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-            Write-Warning ("StatusCode : {0} {1}" -f  [int]$_.Exception.Response.StatusCode, $_)
+            Write-Warning ("StatusCode : {0} {1}" -f [int]$_.Exception.Response.StatusCode, $_)
             return
         } catch {
             Write-Error $_
@@ -72,15 +72,19 @@ function ConvertResponseItemToObject ([PSCustomObject]$ResponseItem) {
     }
     # convert to class
     $obj = [TerraformRelease]::new()
+    $obj.Name = $ResponseItem.name
     $obj.Version = [semver]$ResponseItem.version
     $obj.PreRelease = $ResponseItem.is_prerelease
     $obj.State = $ResponseItem.status.state
     $obj.Created = $ResponseItem.timestamp_created
     $obj.Updated = $ResponseItem.timestamp_updated
+    $obj.LicenseClass = $ResponseItem.license_class
     $obj.ChangeLogUrl = $ResponseItem.url_changelog
     $obj.LicenseUrl = $ResponseItem.url_license
+    $obj.ProjectWebSiteUrl = $ResponseItem.url_project_website
     $obj.DockerHubUrl = $ResponseItem.url_docker_registry_dockerhub
     $obj.AmazonECRUrl = $ResponseItem.url_docker_registry_ecr
+    $obj.SourceRepositoryUrl = $ResponseItem.url_source_repository
     $obj.SHA256SUMsUrl = $ResponseItem.url_shasums
     # set builds
     $obj.Builds = [System.Collections.Generic.List[TerraformReleaseBuild]]::new()

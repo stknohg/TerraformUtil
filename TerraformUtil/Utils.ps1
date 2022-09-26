@@ -1,5 +1,7 @@
 
 class TerraformRelease {
+
+    [string]$Name;
     
     [semver]$Version;
 
@@ -11,14 +13,20 @@ class TerraformRelease {
 
     [datetime]$Updated;
 
+    [string]$LicenseClass;
+
     [string]$ChangeLogUrl;
 
     [string]$LicenseUrl;
+
+    [string]$ProjectWebSiteUrl;
 
     [string]$DockerHubUrl;
 
     [string]$AmazonECRUrl;
 
+    [string]$SourceRepositoryUrl;
+    
     [string]$SHA256SUMsUrl;
 
     [System.Collections.Generic.List[TerraformReleaseBuild]]$Builds;
