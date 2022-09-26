@@ -1,5 +1,5 @@
 @{
-    ModuleVersion        = '0.1.1'
+    ModuleVersion        = '0.2.0'
     CompatiblePSEditions = @('Core')
     GUID                 = '9f940cba-7b6c-4793-8a2a-35da59c45c40'
     Author               = 'Takuya Shibata'
