@@ -49,14 +49,19 @@ You can use "brew install tflint" instead.
         }
     }
     try {
+        Write-Verbose "Invoke-RestMethod to $uri"
         $response = Invoke-RestMethod -Uri $uri -Headers @{ Accept = 'application/vnd.github.v3+json' }
     } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-        Write-Error ("StatusCode : {0} {1}" -f  [int]$_.Exception.Response.StatusCode, $_)
-        return
+        Write-Warning ("StatusCode : {0} {1}" -f  [int]$_.Exception.Response.StatusCode, $_)
     } catch {
         Write-Error $_
         return
     }
+    if (-not $response) {
+        Write-Error "Failed to get tflint release information."
+        return 
+    }
+
     $versionTag = $response.tag_name
     $downloadUrl = if (IsCurrentProcess64bit) {
         $response.assets.browser_download_url | Where-Object {$_ -match "^.+windows_amd64.zip$"}
