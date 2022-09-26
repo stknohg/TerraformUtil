@@ -62,6 +62,9 @@
                                 <PropertyName>Version</PropertyName>
                             </ListItem>
                             <ListItem>
+                                <PropertyName>PreRelease</PropertyName>
+                            </ListItem>
+                            <ListItem>
                                 <PropertyName>State</PropertyName>
                             </ListItem>
                             <ListItem>
