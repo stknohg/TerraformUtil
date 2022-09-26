@@ -60,6 +60,9 @@ Result CurrentVersion LatestVersion
 
 Get Terraform release information using [Hashicorp Releases API](https://releases.hashicorp.com/docs/api/v1/#operation/listReleasesV1).
 
+> **Note**  
+> Currently, no plans to implement pagenation.
+
 ```powershell
 # get the latest release information
 C:\ > Find-TFRelease -Latest
