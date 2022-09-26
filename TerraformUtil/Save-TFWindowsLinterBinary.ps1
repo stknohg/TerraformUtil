@@ -91,7 +91,7 @@ You can use "brew install tflint" instead.
         # success
         WriteInfo ("Binary file is saved to {0}" -f $DestinationPath)
     } finally {
-        if (Test-Path -Path $zipFullPath) {
+        if (Test-Path -LiteralPath $zipFullPath) {
             WriteInfo ("Remove {0}" -f $zipFullPath)
             Remove-Item -LiteralPath $zipFullPath
         }
