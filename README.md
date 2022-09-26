@@ -64,9 +64,9 @@ Get Terraform release information using [Hashicorp Releases API](https://release
 # get the latest release information
 C:\ > Find-TFRelease -Latest
 
-Version State     Created              Updated
-------- -----     -------              -------
-1.3.0   supported 9/21/2022 1:58:58 PM 9/21/2022 1:58:58 PM
+Version PreRelease State     Created              Updated
+------- ---------- -----     -------              -------
+1.3.0   False      supported 9/21/2022 1:58:58 PM 9/21/2022 1:58:58 PM
 ```
 
 ### Save-TFWindowsBinary

@@ -73,6 +73,7 @@ function ConvertResponseItemToObject ([PSCustomObject]$ResponseItem) {
     # convert to class
     $obj = [TerraformRelease]::new()
     $obj.Version = [semver]$ResponseItem.version
+    $obj.PreRelease = $ResponseItem.is_prerelease
     $obj.State = $ResponseItem.status.state
     $obj.Created = $ResponseItem.timestamp_created
     $obj.Updated = $ResponseItem.timestamp_updated

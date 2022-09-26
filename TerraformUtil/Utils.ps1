@@ -3,6 +3,8 @@ class TerraformRelease {
     
     [semver]$Version;
 
+    [bool]$PreRelease;
+
     [string]$State;
 
     [datetime]$Created;
