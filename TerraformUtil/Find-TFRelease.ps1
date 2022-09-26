@@ -10,6 +10,8 @@ function Find-TFRelease {
         [Parameter(ParameterSetName = 'Latest', Mandatory = $true)]
         [Switch]$Latest,
         [Parameter(ParameterSetName = 'Default')]
+        [datetime]$TimeAfter,
+        [Parameter(ParameterSetName = 'Default')]
         [ValidateRange(1, 20)]
         [int]$MaxItems = 10
     )
@@ -31,10 +33,16 @@ function Find-TFRelease {
                 "https://api.releases.hashicorp.com/v1/releases/terraform/$Version"
             }
             Default {
-                "https://api.releases.hashicorp.com/v1/releases/terraform/?limit=$MaxItems"
+                # Currently, no plans to implement pagenation.
+                if ($TimeAfter) {
+                    "https://api.releases.hashicorp.com/v1/releases/terraform/?limit={0}&after={1:yyyy-MM-dd'T'HH:mm:ss}" -f $MaxItems, $TimeAfter
+                } else {
+                    "https://api.releases.hashicorp.com/v1/releases/terraform/?limit={0}" -f $MaxItems
+                }
             }
         }
         try {
+            Write-Verbose "Invoke-RestMethod to $uri"
             $response = Invoke-RestMethod -Uri $uri
         } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
             Write-Warning ("StatusCode : {0} {1}" -f [int]$_.Exception.Response.StatusCode, $_)
