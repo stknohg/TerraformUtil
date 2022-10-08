@@ -81,7 +81,7 @@ function IsCurrentProcess64bit () {
 
 function IsTerraformInstalled () {
     try {
-        $cmd = Get-Command -Name 'terraform' -CommandType Application -ErrorAction SilentlyContinue
+        $cmd = Get-Command -Name 'terraform' -CommandType Application, Alias -ErrorAction SilentlyContinue
         return (-not ($null -eq $cmd))
     } catch {
         return $false
@@ -97,6 +97,6 @@ function GetInstalledTerraformVersion () {
     }
 }
 function InvokeTerraformVersion () {
-   # function for mocking
-   return terraform version
+    # function for mocking
+    return terraform version
 }

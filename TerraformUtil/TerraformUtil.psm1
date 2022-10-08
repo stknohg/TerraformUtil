@@ -5,3 +5,4 @@
 . (Join-Path $PSScriptRoot 'Test-TFVersion.ps1')
 . (Join-Path $PSScriptRoot 'Save-TFWindowsBinary.ps1')
 . (Join-Path $PSScriptRoot 'Save-TFWindowsLinterBinary.ps1')
+. (Join-Path $PSScriptRoot 'Set-TFAlias.ps1')
