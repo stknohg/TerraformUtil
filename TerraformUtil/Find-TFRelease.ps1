@@ -5,7 +5,7 @@
 function Find-TFRelease {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [Parameter(ParameterSetName = 'Version', Mandatory = $true, ValueFromPipeline=$true)]
+        [Parameter(ParameterSetName = 'Version', Mandatory = $true, ValueFromPipeline = $true)]
         [SemVer]$Version,
         [Parameter(ParameterSetName = 'Latest', Mandatory = $true)]
         [Switch]$Latest,
@@ -23,6 +23,9 @@ function Find-TFRelease {
         if ($MaxItems -le 0) {
             $MaxItems = 10
         }
+
+        # define Arraylist for output
+        $objectsForOutput = [System.Collections.ArrayList]::new()
     }
     process {
         $uri = switch ($PSCmdlet.ParameterSetName) {
@@ -52,14 +55,14 @@ function Find-TFRelease {
             return
         }
 
-        # output object
-        $objectsForOutput = [System.Collections.ArrayList]::new()
+        # collect outpt object
         foreach ($r in $response) {
             $obj = ConvertResponseItemToObject -ResponseItem $r
             [void]$objectsForOutput.Add($obj)
         }
     }
     end {
+        Write-Verbose ("Output object count : {0}" -f $objectsForOutput.Count)
         switch ($objectsForOutput.Count) {
             0 {
                 # do nothing
