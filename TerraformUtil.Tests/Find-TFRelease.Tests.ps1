@@ -21,5 +21,13 @@ InModuleScope 'TerraformUtil' {
             $actual.Count | Should -Be 1
             $actual.Version | Should -Be $expected
         }
+
+        It "Should return collect count versions when input value from pipeline" {
+            $actual = '1.2.3', '1.2.5', '1.2.7' | Find-TFRelease 
+            $actual.Count | Should -Be 3
+            $actual[0].Version | Should -Be '1.2.7'
+            $actual[1].Version | Should -Be '1.2.5'
+            $actual[2].Version | Should -Be '1.2.3'
+        }
     }
 }
