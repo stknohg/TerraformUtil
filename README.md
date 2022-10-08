@@ -7,7 +7,6 @@ PowerShell utility functions for [Terraform](https://www.terraform.io/).
 ## Prerequisites
 
 * PowerShell 7 and later
-* Terraform binary is installed to the PATH.
 
 ## How to install
 
