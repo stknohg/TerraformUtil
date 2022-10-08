@@ -6,15 +6,18 @@ InModuleScope 'TerraformUtil' {
     BeforeAll {
         $env:TFALIAS_PATH = "$TestDrive\.tfenv"
         if (-not(Test-Path $env:TFALIAS_PATH)) { mkdir $env:TFALIAS_PATH }
+
+        $LATEST_VERSION = Find-TFRelease -Latest | Select-Object -ExpandProperty Version
+        Write-Output "Latest Terraform version is $LATEST_VERSION"
+
+        Push-Location $TestDrive
     }
 
     Describe "Set-TFAlias unit tests" {
 
         It "Should saved Terraform binary after -Initialize" {
-            $version = Find-TFRelease -Latest | Select-Object -ExpandProperty Version
-
             Set-TFAlias -Initialize
-            $expectedPath = "$env:TFALIAS_PATH\terraform\$version\terraform.exe"
+            $expectedPath = "$env:TFALIAS_PATH\terraform\$LATEST_VERSION\terraform.exe"
             Test-Path -Path $expectedPath | Should -BeTrue
             $actual = Get-Alias terraform
             $actual.Definition | Should -Be $expectedPath
@@ -29,15 +32,36 @@ InModuleScope 'TerraformUtil' {
         }
 
         It "Should show proper terraform version with -Latest" {
-            $version = Find-TFRelease -Latest | Select-Object -ExpandProperty Version
-
             Set-TFAlias -Version 1.2.3
             $expectedPath = "$env:TFALIAS_PATH\terraform\1.2.3\terraform.exe"
             $actual = Get-Alias terraform
             $actual.Definition | Should -Be $expectedPath
 
             Set-TFAlias -Latest
-            $expectedPath = "$env:TFALIAS_PATH\terraform\$version\terraform.exe"
+            $expectedPath = "$env:TFALIAS_PATH\terraform\$LATEST_VERSION\terraform.exe"
+            $actual = Get-Alias terraform
+            $actual.Definition | Should -Be $expectedPath
+        }
+
+        It "Should show warning when .terraform-version file not found with -FromVersionFile" {
+            if (Test-Path -Path './.terraform-version' -PathType Leaf) {Remove-Item -LiteralPath './.terraform-version'}
+            Set-TFAlias -FromVersionFile *>&1 | Should -Be ".terraform-version file not found."
+        }
+
+        It "Should saved latest terraform version with -FromVersionFile" {
+            Write-Output ' latest ' | Out-File -FilePath '.\.terraform-version'
+            
+            Set-TFAlias -FromVersionFile
+            $expectedPath = "$env:TFALIAS_PATH\terraform\$LATEST_VERSION\terraform.exe"
+            $actual = Get-Alias terraform
+            $actual.Definition | Should -Be $expectedPath
+        }
+
+        It "Should saved proper terraform version with -FromVersionFile" {
+            Write-Output ' 1.2.3 ' | Out-File -FilePath '.\.terraform-version'
+            
+            Set-TFAlias -FromVersionFile
+            $expectedPath = "$env:TFALIAS_PATH\terraform\1.2.3\terraform.exe"
             $actual = Get-Alias terraform
             $actual.Definition | Should -Be $expectedPath
         }
@@ -45,5 +69,6 @@ InModuleScope 'TerraformUtil' {
 
     AfterAll {
         $env:TFALIAS_PATH = $null
+        Pop-Location
     }
 }

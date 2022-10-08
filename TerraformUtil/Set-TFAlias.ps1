@@ -11,6 +11,8 @@ function Set-TFAlias {
         [Switch]$Latest,
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
         [semver]$Version,
+        [Parameter(ParameterSetName = 'FromVersionFile', Mandatory = $true)]
+        [Switch]$FromVersionFile,
         [Parameter(ParameterSetName = 'Help', Mandatory = $false)]
         [Switch]$Help
     )
@@ -28,6 +30,10 @@ function Set-TFAlias {
             InvokeTFAliasVersion -Version $Version
             return
         }
+        'FromVersionFile' {
+            InvokeTFAliasFromVersionFile 
+            return
+        }
         Default {
             ShowHelpMessage
         }
@@ -42,6 +48,8 @@ Usage:
   -Initialize         Setup TFAlias environment
   -Latast             Set alias to the latest Terraform version
   -Version X.Y.Z      Set alias to Terraform ver.X.Y.Z
+  -FromVersionFile    Set alias from .terraform-version file
+    * Currently supported "latest", "x.y.z" only.
   -Help               Show this message
 
 Example:
@@ -107,6 +115,31 @@ function InvokeTFAliasVersion ([semver]$Version) {
     # Set alias
     Writeinfo ("Set the v{0} terraform alias." -f $Version)
     DoSetAlias -BinaryPath $versionBinaryPath
+}
+
+function InvokeTFAliasFromVersionFile () {
+    # Check .terraform-version exists
+    if (-not (Test-Path -LiteralPath './.terraform-version' -PathType Leaf)) {
+        Write-Warning (".terraform-version file not found.")
+        return  
+    }
+    
+    # TODO : implement more formal parser
+    $rowString = (Get-Content -LiteralPath './.terraform-version' | Select-Object -First 1).Trim()
+    if ('latest' -eq $rowString) {
+        Write-Verbose 'Detect the latest version'
+        InvokeTFAliasLatestVersion
+        return 
+    }
+    try {
+        $version = [semver]$rowString
+        Write-Verbose ('Detect version {0}' -f $version)
+        InvokeTFAliasVersion -Version $version
+        return
+    } catch {
+        # do nothing
+    }
+    Write-Warning ('Failed to parse .terraform-version : {0}' -f $rowString)
 }
 
 function GetTFAliasRoot() {
