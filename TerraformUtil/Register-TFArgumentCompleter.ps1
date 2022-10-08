@@ -45,6 +45,9 @@ function Register-TFArgumentCompleter () {
                 # Others
                 '-install-autocomplete' { 'Install tab-completion configuration for bash and zsh.' }
                 '-uninstall-autocomplete' { 'Unnstall tab-completion configuration for bash and zsh.' }
+                # deprecated
+                'env' { '[Deprecated] Use "terraform workspace" instead.' }
+                'push' { '[Deprecated] Use Terraform Cloud CLI integration instead.' }
                 Default { $_ }
             }
             [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $toolTip)
