@@ -100,3 +100,7 @@ function InvokeTerraformVersion () {
     # function for mocking
     return terraform version
 }
+
+function GetTempPath () {
+    if ($IsWindows) { $env:TEMP } else { '/tmp/' }
+}

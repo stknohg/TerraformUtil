@@ -14,11 +14,6 @@ function Set-TFAlias {
         [Parameter(ParameterSetName = 'Help', Mandatory = $false)]
         [Switch]$Help
     )
-    # TODO : Add support for Linux,macOS
-    if (-not $IsWindows) {
-        Write-Error 'Currently, This function supports windows only.'
-        return
-    }
     switch ($PSCmdlet.ParameterSetName) {
         'Initialize' {
             # initialize
@@ -65,7 +60,7 @@ function InvokeTFAliasInitialize([Switch]$Update) {
     # Check Alias path
     if (-not (Test-Path -LiteralPath $aliasRoot -PathType Container)) {
         WriteInfo ("Create TFAlias path : {0}" -f $aliasRoot)
-        [void](mkdir -Path $aliasRoot)
+        [void](New-Item -Path $aliasRoot -ItemType Directory)
     }
 
     InvokeTFAliasLatestVersion
@@ -101,12 +96,12 @@ function InvokeTFAliasVersion ([semver]$Version) {
     $versionPath = Join-Path $ailasAppPath "$Version"
     $versionBinaryPath = Join-Path $versionPath $binaryName
     if (-not (Test-Path -LiteralPath $versionPath -PathType Container)) {
-        [void](mkdir -Path $versionPath)  
+        [void](New-Item -Path $versionPath -ItemType Directory)  
     }
     if (-not (Test-Path -LiteralPath $versionBinaryPath -PathType Leaf)) {
         # Install Terraform
         WriteInfo ("Install Terraform v{0} to {1}..." -f $Version, $versionPath)
-        Save-TFWindowsBinary -Version $Version -DestinationPath $versionPath  
+        Save-TFBinary -Version $Version -DestinationPath $versionPath  
     }
 
     # Set alias

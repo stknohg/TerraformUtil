@@ -72,19 +72,16 @@ Version PreRelease State     Created              Updated
 1.3.0   False      supported 9/21/2022 1:58:58 PM 9/21/2022 1:58:58 PM
 ```
 
-### Save-TFWindowsBinary
+### Save-TFBinary
 
-Save the specific version Windows Terraform binary file (`terraform.exe`).  
-
-> **Warning**  
-> This function is supported for Windows only.
+Save the specific version Windows Terraform binary file (`terraform.exe` or `terraform`).  
 
 ```powershell
 # save the latest binary file (terraform.exe) to "C:\hashicorp\terraform" folder
-Save-TFWindowsBinary -Latest -DestinationPath C:\hashicorp\terraform
+Save-TFBinary -Latest -DestinationPath C:\hashicorp\terraform
 
 # save the ver.1.2.9 binary file to "C:\hashicorp\terraform" folder
-Save-TFWindowsBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
+Save-TFBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
 ```
 
 ### Save-TFWindowsLinterBinary
