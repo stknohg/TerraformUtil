@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-    Save the specific version Windows tflint binary file.
+    Save the specific version tflint binary file.
 #>
-function Save-TFWindowsLinterBinary {
+function Save-TFLinterBinary {
     [CmdletBinding(DefaultParameterSetName = 'Latest')]
     param (
         [Parameter(ParameterSetName = 'Latest', Mandatory = $true)]
@@ -13,23 +13,6 @@ function Save-TFWindowsLinterBinary {
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
         [string]$DestinationPath
     )
-    # This function is for Windows only.
-    if ($IsLinux) {
-        Write-Warning @"
-This function is supported for Windows only.
-You can run following installation script instead.
-
-curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-"@
-        return
-    }
-    if ($IsMacOS) {
-        Write-Warning @"
-This function is supported for Windows only.
-You can use "brew install tflint" instead.
-"@
-        return
-    }
     # Test path
     if (-not (Test-Path -LiteralPath $DestinationPath)) {
         Write-Error "DestinationPath $DestinationPath does not exist."
@@ -44,15 +27,12 @@ You can use "brew install tflint" instead.
         'Version' {
             "https://api.github.com/repos/terraform-linters/tflint/releases/tags/v$Version"
         }
-        default {
-            'https://api.github.com/repos/terraform-linters/tflint/releases/latest'
-        }
     }
     try {
         Write-Verbose "Invoke-RestMethod to $uri"
         $response = Invoke-RestMethod -Uri $uri -Headers @{ Accept = 'application/vnd.github.v3+json' }
     } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-        Write-Warning ("StatusCode : {0} {1}" -f  [int]$_.Exception.Response.StatusCode, $_)
+        Write-Warning ("StatusCode : {0} {1}" -f [int]$_.Exception.Response.StatusCode, $_)
     } catch {
         Write-Error $_
         return
@@ -63,21 +43,21 @@ You can use "brew install tflint" instead.
     }
 
     $versionTag = $response.tag_name
-    $downloadUrl = if (IsCurrentProcess64bit) {
-        $response.assets.browser_download_url | Where-Object {$_ -match "^.+windows_amd64.zip$"}
-    } else {
-        $response.assets.browser_download_url | Where-Object {$_ -match "^.+windows_386.zip$"}
-    }
     WriteInfo ("Find tflint {0}." -f $versionTag)
-
+    $downloadUrl = GetBinaryUrlFromResponse -Response $response
+    if (-not $downloadUrl) {
+        Write-Error "Failed to find download url."
+        return
+    }
+    
     # download and expand zip archive
-    $tempPath = $env:TEMP
+    $tempPath = GetTempPath
     $zipFileName = $downloadUrl.split("/")[-1]
     $zipFullPath = Join-Path $tempPath -ChildPath $zipFileName 
     try {
         # download
-        WriteInfo ("Download {0}" -f ($downloadUrl))
-        WriteInfo ("  to {0}" -f ($zipFullPath))
+        Write-Verbose ("Download {0}" -f ($downloadUrl))
+        Write-Verbose ("  to {0}" -f ($zipFullPath))
         $client = $null
         try {
             $client = [System.Net.WebClient]::new() 
@@ -86,14 +66,46 @@ You can use "brew install tflint" instead.
             $client.Dispose()
         }
         # expand
-        WriteInfo ("Expand {0} to {1}" -f $zipFileName, $DestinationPath)
+        Write-Verbose ("Expand {0} to {1}" -f $zipFileName, $DestinationPath)
         Expand-Archive -LiteralPath $zipFullPath -DestinationPath $DestinationPath -Force
+        # chmod 
+        if (-not $IsWindows) {
+            Write-Verbose ("chmod +x {0}" -f (Join-Path $DestinationPath 'tflint'))
+            chmod +x (Join-Path $DestinationPath 'tflint')
+        }
         # success
         WriteInfo ("Binary file is saved to {0}" -f $DestinationPath)
     } finally {
-        if (Test-Path -LiteralPath $zipFullPath) {
-            WriteInfo ("Remove {0}" -f $zipFullPath)
+        if (Test-Path -LiteralPath $zipFullPath -PathType Leaf) {
+            Write-Verbose ("Remove {0}" -f $zipFullPath)
             Remove-Item -LiteralPath $zipFullPath
         }
     }
+}
+
+function GetBinaryUrlFromResponse ($Response) {
+    # get OS name
+    $osName = if ($IsMacOS) { 'darwin' } elseif ($IsLinux) { 'linux' } else { 'windows' }
+    Write-Verbose ("OS : {0}" -f $osName)
+
+    # get cpu architecture
+    $cpuArchitecture = $null
+    # is arm
+    if ($IsWindows) {
+        if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') {
+            $cpuArchitecture = 'arm64'
+        }
+    } else {
+        if ((uname -m) -match '(arm64.*|aarch64.*)') {
+            $cpuArchitecture = 'arm64'
+        }
+    }
+    # amd64 or i386
+    if (-not $cpuArchitecture) {
+        $cpuArchitecture = if (IsCurrentProcess64bit) { 'amd64' } else { '386' }
+    }
+    Write-Verbose ("CPU Archetecture : {0}" -f $cpuArchitecture)
+    
+    $queryString = "^.+${osName}_${cpuArchitecture}.zip$"
+    return $response.assets.browser_download_url | Where-Object { $_ -match $queryString }
 }

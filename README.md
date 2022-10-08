@@ -19,6 +19,32 @@ Install-Module -Name TerraformUtil
 
 ## Functions
 
+### Set-TFAlias
+
+Set the `terraform` alias like [tfenv](https://github.com/tfutils/tfenv).
+
+```powershell
+# Initialize and download the latest version Terraform
+C:\ > Set-TFAlias -Initialize
+
+# Use latest version Terraform
+C:\ > Set-TFAlias -Latest
+C:\ > terraform version
+Terraform vX.Y.Z
+
+# download Terraform v.1.2.3 and set alias
+C:\ > Set-TFAlias -Version 1.2.3  
+C:\ > terraform version
+Terraform v1.2.3
+
+# Terraform binary is saved .tfalias directory
+C:\ > Get-Command -Name 'terraform' | Select-Object CommandType, Name, Definition
+
+CommandType Name      Definition
+----------- ----      ----------
+      Alias terraform C:\Users\stknohg\.tfalias\terraform\1.2.3\terraform.exe
+```
+
 ### Register-TFArgumentCompleter
 
 Register auto-completer for `terraform` command.
@@ -72,34 +98,28 @@ Version PreRelease State     Created              Updated
 1.3.0   False      supported 9/21/2022 1:58:58 PM 9/21/2022 1:58:58 PM
 ```
 
-### Save-TFWindowsBinary
+### Save-TFBinary
 
-Save the specific version Windows Terraform binary file (`terraform.exe`).  
-
-> **Warning**  
-> This function is supported for Windows only.
+Save the specific version Windows Terraform binary file (`terraform.exe` or `terraform`).  
 
 ```powershell
 # save the latest binary file (terraform.exe) to "C:\hashicorp\terraform" folder
-Save-TFWindowsBinary -Latest -DestinationPath C:\hashicorp\terraform
+Save-TFBinary -Latest -DestinationPath C:\hashicorp\terraform
 
 # save the ver.1.2.9 binary file to "C:\hashicorp\terraform" folder
-Save-TFWindowsBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
+Save-TFBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
 ```
 
-### Save-TFWindowsLinterBinary
+### Save-TFLinterBinary
 
-Save the specific version [linter](https://github.com/terraform-linters/tflint) binary file (`tflint.exe`).  
-
-> **Warning**  
-> This function is supported for Windows only.
+Save the specific version [linter](https://github.com/terraform-linters/tflint) binary file (`tflint.exe` or `tflint`).  
 
 ```powershell
 # save the latest linter binary file (tflint.exe) to "C:\hashicorp\terraform" folder
-Save-TFWindowsLinterBinary -Latest -DestinationPath C:\hashicorp\terraform
+Save-TFLinterBinary -Latest -DestinationPath C:\hashicorp\terraform
 
 # save the ver.0.40.0 binary file to "C:\hashicorp\terraform" folder
-Save-TFWindowsLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
+Save-TFLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
 ```
 
 ## License
