@@ -70,15 +70,14 @@ This function is same as `terraform version` command, but you can treat version 
 ```powershell
 # same as "terraform version"
 C:\ > Test-TFVersion
-Newer version Terraform v1.3.0 is available. (Current : v1.2.9)
+Newer version Terraform vX.Y.Z is available. (Current : v1.2.3)
 
 # returns version object with -PassThru parameter
 C:\ > Test-TFVersion -PassThru
-Newer version Terraform v1.3.0 is available. (Current : v1.2.9)
 
 Result CurrentVersion LatestVersion
 ------ -------------- -------------
- False 1.2.9          1.3.0
+ False 1.2.3          X.Y.Z
 ```
 
 ### Find-TFRelease

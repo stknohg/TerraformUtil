@@ -22,21 +22,21 @@ function Test-TFVersion {
     }
     # compare
     if ($currentVersion -gt $latestVersion) {
-        WriteInfo ("Terraform v{0} is newer than the latest version v{1}." -f $currentVersion, $latestVersion)
         if ($PassThru) {
             return [PSCustomObject]@{ Result = $true; CurrentVersion = $currentVersion; LatestVersion = $latestVersion }
         }
+        WriteInfo ("Terraform v{0} is newer than the latest version v{1}." -f $currentVersion, $latestVersion)
         return
     }
     if ($currentVersion -eq $latestVersion) {
-        WriteInfo ("Terraform v{0} is the latest version." -f $currentVersion)
         if ($PassThru) {
             return [PSCustomObject]@{ Result = $true; CurrentVersion = $currentVersion; LatestVersion = $latestVersion }
         }
+        WriteInfo ("Terraform v{0} is the latest version." -f $currentVersion)
         return
     }
-    WriteInfo ("Newer version Terraform v{0} is available. (Current : v{1})" -f $latestVersion, $currentVersion)
     if ($PassThru) {
         return [PSCustomObject]@{ Result = $false; CurrentVersion = $currentVersion; LatestVersion = $latestVersion }
     }
+    WriteInfo ("Newer version Terraform v{0} is available. (Current : v{1})" -f $latestVersion, $currentVersion)
 }
