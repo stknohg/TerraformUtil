@@ -97,6 +97,39 @@ Version PreRelease State     Created              Updated
 1.3.0   False      supported 9/21/2022 1:58:58 PM 9/21/2022 1:58:58 PM
 ```
 
+### Find-TFVersion
+
+Get Terraform versions list by scraping `https://releases.hashicorp.com/terraform`.  
+
+```powershell
+# get all versions (descending by default)
+C:\ > Find-TFVersion
+
+Major  Minor  Patch  PreReleaseLabel BuildLabel
+-----  -----  -----  --------------- ----------
+1      3      0
+1      3      0      rc1
+1      3      0      beta1
+# ... snip ...
+0      2      0
+0      1      1
+0      1      0
+
+# use filter script block
+C:\ > Find-TFVersion -Filter { $_ -lt '1.0.0' -and (-not $_.PreReleaseLabel) } -Take 1
+
+Major  Minor  Patch  PreReleaseLabel BuildLabel
+-----  -----  -----  --------------- ----------
+0      15     5
+
+# pipe to Find-TFRelease
+C:\ > Find-TFVersion -Filter { $_ -lt '1.0.0' -and (-not $_.PreReleaseLabel) } -Take 1 | Find-TFRelease
+
+Version PreRelease State     Created             Updated
+------- ---------- -----     -------             -------
+0.15.5  False      supported 6/2/2021 6:01:19 PM 6/2/2021 6:01:19 PM
+```
+
 ### Save-TFBinary
 
 Save the specific version Windows Terraform binary file (`terraform.exe` or `terraform`).  
