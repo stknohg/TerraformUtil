@@ -48,7 +48,7 @@ InModuleScope 'TerraformUtil' {
             Set-TFAlias -FromVersionFile *>&1 | Should -Be ".terraform-version file not found."
         }
 
-        It "Should saved latest terraform version with -FromVersionFile" {
+        It "Should saved latest terraform version with -FromVersionFile (latest)" {
             Write-Output ' latest ' | Out-File -FilePath '.\.terraform-version'
             
             Set-TFAlias -FromVersionFile
@@ -57,13 +57,32 @@ InModuleScope 'TerraformUtil' {
             $actual.Definition | Should -Be $expectedPath
         }
 
-        It "Should saved proper terraform version with -FromVersionFile" {
+        It "Should saved proper terraform version with -FromVersionFile (latest:^0.8)" {
+            Write-Output ' latest:^0.8 ' | Out-File -FilePath '.\.terraform-version'
+            
+            Set-TFAlias -FromVersionFile
+            $expectedPath = "$env:TFALIAS_PATH\terraform\0.8.8\terraform.exe"
+            $actual = Get-Alias terraform
+            $actual.Definition | Should -Be $expectedPath
+        }
+
+        It "Should saved proper terraform version with -FromVersionFile (1.2.3)" {
             Write-Output ' 1.2.3 ' | Out-File -FilePath '.\.terraform-version'
             
             Set-TFAlias -FromVersionFile
             $expectedPath = "$env:TFALIAS_PATH\terraform\1.2.3\terraform.exe"
             $actual = Get-Alias terraform
             $actual.Definition | Should -Be $expectedPath
+        }
+
+        It "Should show warning when .terraform-version has latest-allowed" {
+            Write-Output ' latest-allowed ' | Out-File -FilePath '.\.terraform-version'
+            Set-TFAlias -FromVersionFile *>&1 | Should -Be "latest-allowed is not supported."
+        }
+
+        It "Should show warning when .terraform-version has min-required" {
+            Write-Output ' min-required ' | Out-File -FilePath '.\.terraform-version'
+            Set-TFAlias -FromVersionFile *>&1 | Should -Be "min-required is not supported."
         }
     }
 

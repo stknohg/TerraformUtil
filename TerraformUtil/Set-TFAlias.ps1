@@ -49,7 +49,7 @@ Usage:
   -Latast             Set alias to the latest Terraform version
   -Version X.Y.Z      Set alias to Terraform ver.X.Y.Z
   -FromVersionFile    Set alias from .terraform-version file
-    * Currently supported "latest", "x.y.z" only.
+    * Currently supported "latest", "latest:<regex>", "x.y.z"
   -Help               Show this message
 
 Example:
@@ -126,9 +126,30 @@ function InvokeTFAliasFromVersionFile () {
     
     # TODO : implement more formal parser
     $rowString = (Get-Content -LiteralPath './.terraform-version' | Select-Object -First 1).Trim()
+    if ('latest-allowed' -eq $rowString) {
+        Write-Warning 'latest-allowed is not supported.'
+        return 
+    }
+    if ('min-required' -eq $rowString) {
+        Write-Warning 'min-required is not supported.'
+        return 
+    }
     if ('latest' -eq $rowString) {
         Write-Verbose 'Detect the latest version'
         InvokeTFAliasLatestVersion
+        return 
+    }
+    if ($rowString -match '^latest:(?<match_exp>.+)$' ) {
+        $matchExp = $Matches.match_exp
+        Write-Verbose ("version match expression : {0}" -f $matchExp)
+        # exclude prerelease
+        $matchVersion = Find-TFVersion -Filter { "$_" -match $matchExp -and (-not $_.PreReleaseLabel) } -Take 1
+        if (-not $matchVersion) {
+            Write-Warning ('Failed to detect Terraform version. (expression = {0})' -f $matchExp)
+            return
+        }
+        Write-Verbose ('Detect version {0}' -f $matchVersion)
+        InvokeTFAliasVersion -Version $matchVersion
         return 
     }
     try {
