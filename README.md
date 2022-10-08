@@ -19,6 +19,32 @@ Install-Module -Name TerraformUtil
 
 ## Functions
 
+### Set-TFAlias
+
+Set the `terraform` alias like [tfenv](https://github.com/tfutils/tfenv).
+
+```powershell
+# Initialize and download the latest version Terraform
+C:\ > Set-TFAlias -Initialize
+
+# Use latest version Terraform
+C:\ > Set-TFAlias -Latest
+C:\ > terraform version
+Terraform vX.Y.Z
+
+# download Terraform v.1.2.3 and set alias
+C:\ > Set-TFAlias -Version 1.2.3  
+C:\ > terraform version
+Terraform v1.2.3
+
+# Terraform binary is saved .tfalias directory
+C:\ > Get-Command -Name 'terraform' | Select-Object CommandType, Name, Definition
+
+CommandType Name      Definition
+----------- ----      ----------
+      Alias terraform C:\Users\stknohg\.tfalias\terraform\1.2.3\terraform.exe
+```
+
 ### Register-TFArgumentCompleter
 
 Register auto-completer for `terraform` command.
