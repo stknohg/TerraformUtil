@@ -163,21 +163,6 @@ function InvokeTFAliasFromVersionFile () {
     Write-Warning ('Failed to parse .terraform-version : {0}' -f $rowString)
 }
 
-function GetTFAliasRoot() {
-    if (-not ($env:TFALIAS_PATH)) {
-        return (Join-Path $HOME '.tfalias')
-    }
-    if (-not (Test-Path -LiteralPath $env:TFALIAS_PATH)) {
-        Write-Warning ("TFALIAS_PATH {0} not found. So use {1}" -f $env:TFALIAS_PATH, (Join-Path $HOME '.tfalias'))
-        return (Join-Path $HOME '.tfalias')
-    }
-    return $env:TFALIAS_PATH
-}
-
-function GetTerraformBinaryName () {
-    if ($IsWindows) { 'terraform.exe' } else { 'terraform' }
-}
-
 function DoSetAlias ([string]$BinaryPath) {
     # Set-Alias global
     Set-Alias -Name 'terraform' -Value $BinaryPath -Scope Global    

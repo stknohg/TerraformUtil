@@ -104,3 +104,18 @@ function InvokeTerraformVersion () {
 function GetTempPath () {
     if ($IsWindows) { $env:TEMP } else { '/tmp/' }
 }
+
+function GetTerraformBinaryName () {
+    if ($IsWindows) { 'terraform.exe' } else { 'terraform' }
+}
+
+function GetTFAliasRoot() {
+    if (-not ($env:TFALIAS_PATH)) {
+        return (Join-Path $HOME '.tfalias')
+    }
+    if (-not (Test-Path -LiteralPath $env:TFALIAS_PATH)) {
+        Write-Warning ("TFALIAS_PATH {0} not found. So use {1}" -f $env:TFALIAS_PATH, (Join-Path $HOME '.tfalias'))
+        return (Join-Path $HOME '.tfalias')
+    }
+    return $env:TFALIAS_PATH
+}

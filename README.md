@@ -31,7 +31,7 @@ C:\ > Set-TFAlias -Latest
 C:\ > terraform version
 Terraform vX.Y.Z
 
-# download Terraform v.1.2.3 and set alias
+# Download Terraform v.1.2.3 and set alias
 C:\ > Set-TFAlias -Version 1.2.3  
 C:\ > terraform version
 Terraform v1.2.3
@@ -44,12 +44,43 @@ CommandType Name      Definition
       Alias terraform C:\Users\stknohg\.tfalias\terraform\1.2.3\terraform.exe
 ```
 
+### Get-TFAlias
+
+Get installed `terraform` alias.
+
+```powershell
+# Get all installed Terraform.
+C:\ > Get-TFAlias
+
+Current Version   Path
+------- -------   ----
+  False X.Y.Z     C:\Users\stknohg\.tfalias\terraform\X.Y.Z\terraform.exe
+   True 1.2.3     C:\Users\stknohg\.tfalias\terraform\1.2.3\terraform.exe
+```
+
+### Uninstall-TFAlias
+
+Uninstall `terraform` alias.
+
+```powershell
+# Uninstall Terraform v1.2.3
+C:\ > Uninstall-TFAlias -Version 1.2.3
+Uninstall Terraform v1.2.3
+```
+
+If you want to remove only alias, use [Remove-Alias](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/remove-alias) cmdlet.
+
+```powershell
+# Remove only alias (don't uninstall Terraform binary)
+Remove-Alias terraform
+```
+
 ### Register-TFArgumentCompleter
 
 Register auto-completer for `terraform` command.
 
 ```powershell
-# register auto-completer
+# Register auto-completer
 Register-TFArgumentCompleter
 ```
 
@@ -58,7 +89,7 @@ Register-TFArgumentCompleter
 Unregister auto-completer for `terraform` command.
 
 ```powershell
-# unregister auto-completer
+# Unregister auto-completer
 UnRegister-TFArgumentCompleter
 ```
 
@@ -68,11 +99,11 @@ Test installed Terraform version is the latest version.
 This function is same as `terraform version` command, but you can treat version object with `-PassThru` parameter.
 
 ```powershell
-# same as "terraform version"
+# Same as "terraform version"
 C:\ > Test-TFVersion
 Newer version Terraform vX.Y.Z is available. (Current : v1.2.3)
 
-# returns version object with -PassThru parameter
+# Returns version object with -PassThru parameter
 C:\ > Test-TFVersion -PassThru
 
 Result CurrentVersion LatestVersion
@@ -88,7 +119,7 @@ Get Terraform release information using [Hashicorp Releases API](https://release
 > Currently, no plans to implement pagenation.
 
 ```powershell
-# get the latest release information
+# Get the latest release information
 C:\ > Find-TFRelease -Latest
 
 Version PreRelease State     Created              Updated
@@ -101,7 +132,7 @@ Version PreRelease State     Created              Updated
 Get Terraform versions list by scraping `https://releases.hashicorp.com/terraform`.  
 
 ```powershell
-# get all versions (descending by default)
+# Get all versions (descending by default)
 C:\ > Find-TFVersion
 
 Major  Minor  Patch  PreReleaseLabel BuildLabel
@@ -114,14 +145,14 @@ Major  Minor  Patch  PreReleaseLabel BuildLabel
 0      1      1
 0      1      0
 
-# use filter script block
+# Use filter script block
 C:\ > Find-TFVersion -Filter { $_ -lt '1.0.0' -and (-not $_.PreReleaseLabel) } -Take 1
 
 Major  Minor  Patch  PreReleaseLabel BuildLabel
 -----  -----  -----  --------------- ----------
 0      15     5
 
-# pipe to Find-TFRelease
+# Pipe to Find-TFRelease
 C:\ > Find-TFVersion -Filter { $_ -lt '1.0.0' -and (-not $_.PreReleaseLabel) } -Take 1 | Find-TFRelease
 
 Version PreRelease State     Created             Updated
@@ -134,10 +165,10 @@ Version PreRelease State     Created             Updated
 Save the specific version Windows Terraform binary file (`terraform.exe` or `terraform`).  
 
 ```powershell
-# save the latest binary file (terraform.exe) to "C:\hashicorp\terraform" folder
+# Save the latest binary file (terraform.exe) to "C:\hashicorp\terraform" folder
 Save-TFBinary -Latest -DestinationPath C:\hashicorp\terraform
 
-# save the ver.1.2.9 binary file to "C:\hashicorp\terraform" folder
+# Save the ver.1.2.9 binary file to "C:\hashicorp\terraform" folder
 Save-TFBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
 ```
 
@@ -146,10 +177,10 @@ Save-TFBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
 Save the specific version [linter](https://github.com/terraform-linters/tflint) binary file (`tflint.exe` or `tflint`).  
 
 ```powershell
-# save the latest linter binary file (tflint.exe) to "C:\hashicorp\terraform" folder
+# Save the latest linter binary file (tflint.exe) to "C:\hashicorp\terraform" folder
 Save-TFLinterBinary -Latest -DestinationPath C:\hashicorp\terraform
 
-# save the ver.0.40.0 binary file to "C:\hashicorp\terraform" folder
+# Save the ver.0.40.0 binary file to "C:\hashicorp\terraform" folder
 Save-TFLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
 ```
 
