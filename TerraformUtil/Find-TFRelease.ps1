@@ -5,7 +5,7 @@
 function Find-TFRelease {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
+        [Parameter(ParameterSetName = 'Version', Mandatory = $true, ValueFromPipeline=$true)]
         [SemVer]$Version,
         [Parameter(ParameterSetName = 'Latest', Mandatory = $true)]
         [Switch]$Latest,
