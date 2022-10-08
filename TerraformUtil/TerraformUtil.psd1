@@ -9,7 +9,7 @@
     PowerShellVersion    = '7.0.0'
     NestedModules        = @('TerraformUtil.psm1')
     FunctionsToExport    = @('Register-TFArgumentCompleter', 'UnRegister-TFArgumentCompleter',
-                             'Find-TFRelease', 'Test-TFVersion',
+                             'Find-TFRelease', 'Find-TFVersion','Test-TFVersion',
                              'Save-TFBinary', 'Save-TFLinterBinary',
                              'Set-TFAlias')
     FormatsToProcess     = @('TerraformUtil.format.ps1xml')
