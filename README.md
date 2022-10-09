@@ -2,7 +2,7 @@
 
 ![build](https://github.com/stknohg/TerraformUtil/workflows/build/badge.svg)
 
-PowerShell utility functions for [Terraform](https://www.terraform.io/).
+PowerShell utility functions for [Terraform](https://www.terraform.io/).  
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ Install-Module -Name TerraformUtil
 
 ### Set-TFAlias
 
-Set the `terraform` alias like [tfenv](https://github.com/tfutils/tfenv).
+Set the `terraform` alias like [tfenv](https://github.com/tfutils/tfenv).   
 
 ```powershell
 # Initialize and download the latest version Terraform
@@ -129,7 +129,7 @@ Version PreRelease State     Created              Updated
 
 ### Find-TFVersion
 
-Get Terraform versions list by scraping `https://releases.hashicorp.com/terraform`.  
+Get Terraform versions list by scraping `https://releases.hashicorp.com/terraform` same as `tfenv list-remote`.  
 
 ```powershell
 # Get all versions (descending by default)
