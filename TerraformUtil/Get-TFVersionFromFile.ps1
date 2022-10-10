@@ -19,7 +19,7 @@ function Get-TFVersionFromFile {
     }
 
     # TODO : implement more formal parser
-    $rowString = @(Get-Content -LiteralPath './.terraform-version')[0].Trim()
+    $rowString = @(Get-Content -LiteralPath $LiteralPath)[0].Trim()
     if ('latest-allowed' -eq $rowString) {
         # TODO
         Write-Warning 'latest-allowed is not supported.'
