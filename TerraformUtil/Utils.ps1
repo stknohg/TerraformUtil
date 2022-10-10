@@ -125,20 +125,20 @@ function GetTerraformBinaryName () {
 }
 
 function GetTFAliasRoot () {
-    if (-not ($env:TFALIAS_PATH)) {
-        return (Join-Path $HOME '.tfalias')
+    if (-not $env:TFALIAS_PATH) {
+        return [System.IO.Path]::Join($HOME, '.tfalias')
     }
     if (-not (Test-Path -LiteralPath $env:TFALIAS_PATH)) {
-        Write-Warning ("TFALIAS_PATH {0} not found. So use {1}" -f $env:TFALIAS_PATH, (Join-Path $HOME '.tfalias'))
-        return (Join-Path $HOME '.tfalias')
+        Write-Warning ("TFALIAS_PATH {0} not found. So use {1}" -f $env:TFALIAS_PATH, ([System.IO.Path]::Join($HOME, '.tfalias')))
+        return [System.IO.Path]::Join($HOME, '.tfalias')
     }
     return $env:TFALIAS_PATH
 }
 
 function GetTFAliasAppPath () {
-    return Join-Path -Path (GetTFAliasRoot) -ChildPath 'terraform'
+    return [System.IO.Path]::Join((GetTFAliasRoot), 'terraform')
 }
 
 function GetTFAliasVersionFilePath () {
-    return Join-Path -Path (GetTFAliasAppPath) -ChildPath 'version'
+    return [System.IO.Path]::Join((GetTFAliasAppPath), 'version')
 }
