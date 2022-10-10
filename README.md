@@ -44,13 +44,13 @@ CommandType Name      Definition
       Alias terraform C:\Users\stknohg\.tfalias\bin\terraform.ps1
 ```
 
-### Get-TFAlias
+### Get-TFInstalledAlias
 
 Get installed `terraform` alias.
 
 ```powershell
 # Get all installed Terraform.
-C:\ > Get-TFAlias
+C:\ > Get-TFInstalledAlias
 
 Current Version   Path
 ------- -------   ----

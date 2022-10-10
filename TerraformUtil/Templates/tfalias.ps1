@@ -66,7 +66,7 @@ function Main () {
             return
         }
         'list' {
-            Get-TFAlias | ForEach-Object {
+            Get-TFInstalledAlias | ForEach-Object {
                 "{0} {1}" -f $(if ($_.Current) { '*' } else { ' ' }), ($_.Version.ToString())
             }
         }

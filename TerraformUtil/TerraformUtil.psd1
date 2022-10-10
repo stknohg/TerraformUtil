@@ -11,7 +11,7 @@
     FunctionsToExport    = @('Register-TFArgumentCompleter', 'UnRegister-TFArgumentCompleter',
                              'Find-TFRelease', 'Find-TFVersion','Test-TFVersion', 'Get-TFVersionFromFile',
                              'Save-TFBinary', 'Save-TFLinterBinary',
-                             'Set-TFAlias', 'Get-TFAlias', 'Uninstall-TFAlias')
+                             'Set-TFAlias', 'Get-TFInstalledAlias', 'Uninstall-TFAlias')
     FormatsToProcess     = @('TerraformUtil.format.ps1xml')
     PrivateData = @{
         PSData = @{

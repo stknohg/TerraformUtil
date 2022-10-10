@@ -72,7 +72,7 @@ function InvokeTFAliasInitialize([Switch]$Update) {
     InstallTemplateFiles -Destination $shimBinPath
 
     # Check current version
-    $version = Get-TFAlias -Current
+    $version = Get-TFInstalledAlias -Current
     if ($version) {
         # Set current version silently
         Write-Verbose ('Use current Terraform v{0}.' -f ($version.Version))

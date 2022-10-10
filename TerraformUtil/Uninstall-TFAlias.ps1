@@ -31,7 +31,7 @@ function Uninstall-TFAlias {
         }
 
         # Uninstall
-        $currentAlias = Get-TFAlias -Current
+        $currentAlias = Get-TFInstalledAlias -Current
         Writeinfo ('Uninstall Terraform v{0}' -f $Version)
         # remove directory
         Remove-Item -LiteralPath $versionPath -Recurse -ErrorAction SilentlyContinue
