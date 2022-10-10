@@ -22,10 +22,10 @@ $currentVersion = [semver]@([System.IO.File]::ReadAllLines($verFilePath))[0]
 if (Test-Path -Path './.terraform-version' -PathType Leaf) {
     $fileVersion = Get-TFVersionFromFile
     if (-not $fileVersion) {
-        Write-Warning (".terraform-version is detected, but failed to parse." -f $fileVersion)
+        Write-Warning '.terraform-version is detected, but failed to parse.'
     } else {
         if ($currentVersion -ne $fileVersion) {
-            Write-Host ("Preferred version.{0} is detected from .terraform-version" -f $fileVersion) -ForegroundColor Yellow
+            Write-Host ('Preferred version.{0} is detected from .terraform-version' -f $fileVersion) -ForegroundColor Yellow
             Set-TFAlias -Version $fileVersion
             $currentVersion = $fileVersion
         }
