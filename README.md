@@ -36,21 +36,21 @@ C:\ > Set-TFAlias -Version 1.2.3
 C:\ > terraform version
 Terraform v1.2.3
 
-# Terraform binary is saved .tfalias directory
+# Terraform binary is executed via shim.
 C:\ > Get-Command -Name 'terraform' | Select-Object CommandType, Name, Definition
 
 CommandType Name      Definition
 ----------- ----      ----------
-      Alias terraform C:\Users\stknohg\.tfalias\terraform\1.2.3\terraform.exe
+      Alias terraform C:\Users\stknohg\.tfalias\bin\terraform.ps1
 ```
 
-### Get-TFAlias
+### Get-TFInstalledAlias
 
 Get installed `terraform` alias.
 
 ```powershell
 # Get all installed Terraform.
-C:\ > Get-TFAlias
+C:\ > Get-TFInstalledAlias
 
 Current Version   Path
 ------- -------   ----
@@ -66,13 +66,6 @@ Uninstall `terraform` alias.
 # Uninstall Terraform v1.2.3
 C:\ > Uninstall-TFAlias -Version 1.2.3
 Uninstall Terraform v1.2.3
-```
-
-If you want to remove only alias, use [Remove-Alias](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/remove-alias) cmdlet.
-
-```powershell
-# Remove only alias (don't uninstall Terraform binary)
-Remove-Alias terraform
 ```
 
 ### Register-TFArgumentCompleter

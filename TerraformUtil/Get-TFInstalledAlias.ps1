@@ -2,7 +2,7 @@
 .SYNOPSIS
     Get installed "terraform" alias
 #>
-function Get-TFAlias {
+function Get-TFInstalledAlias {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
         [Parameter(ParameterSetName = 'Current', Mandatory = $false)]

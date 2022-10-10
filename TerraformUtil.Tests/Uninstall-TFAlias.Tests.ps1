@@ -17,18 +17,16 @@ InModuleScope 'TerraformUtil' {
             Set-TFAlias -Version 1.2.5
             Set-TFAlias -Version 1.2.3
             { Uninstall-TFAlias -Version 1.2.3 } | Should -Not -Throw
-            Get-TFAlias | Where-Object { $_.Version -eq '1.2.5'} | Should -Not -BeNullOrEmpty
-            Get-TFAlias | Where-Object { $_.Version -eq '1.2.3'} | Should -BeNullOrEmpty
-            Get-Alias 'terraform' -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+            Get-TFInstalledAlias | Where-Object { $_.Version -eq '1.2.5'} | Should -Not -BeNullOrEmpty
+            Get-TFInstalledAlias | Where-Object { $_.Version -eq '1.2.3'} | Should -BeNullOrEmpty
         }
 
         It "Should uninstall all alias" {
             Set-TFAlias -Initialize
             Set-TFAlias -Version 1.2.5
             Set-TFAlias -Version 1.2.3
-            { Get-TFAlias | Uninstall-TFAlias } | Should -Not -Throw
-            Get-TFAlias | Should -BeNullOrEmpty
-            Get-Alias 'terraform' -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+            { Get-TFInstalledAlias | Uninstall-TFAlias } | Should -Not -Throw
+            Get-TFInstalledAlias | Should -BeNullOrEmpty
         }
     }
 

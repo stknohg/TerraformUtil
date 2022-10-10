@@ -2,13 +2,16 @@
 .SYNOPSIS
     Register PowerShell completer for Terraform.
 #>
-function Register-TFArgumentCompleter () {
+function Register-TFArgumentCompleter ([string]$CommandName = 'terraform') {
+    if ([string]::IsNullOrEmpty($CommandName)) {
+        $CommandName = 'terraform'
+    }
     if ( -not (IsTerraformInstalled) ) {
         return
     }
 
     # register completer
-    Register-ArgumentCompleter -Native -CommandName 'terraform' -ScriptBlock {
+    Register-ArgumentCompleter -Native -CommandName $CommandName -ScriptBlock {
         param($wordToComplete, $commandAst, $cursorPosition)
 
         $env:COMP_LINE = $commandAst.ToString()
@@ -60,11 +63,14 @@ function Register-TFArgumentCompleter () {
 .SYNOPSIS
     UnRegister PowerShell completer for Terraform.
 #>
-function UnRegister-TFArgumentCompleter () {
+function UnRegister-TFArgumentCompleter ([string]$CommandName = 'terraform') {
+    if ([string]::IsNullOrEmpty($CommandName)) {
+        $CommandName = 'terraform'
+    }
     if ( -not (IsTerraformInstalled) ) {
         return
     }
     
     # unregister completer
-    Register-ArgumentCompleter -Native -CommandName 'terraform' -ScriptBlock $null
+    Register-ArgumentCompleter -Native -CommandName $CommandName -ScriptBlock $null
 }
