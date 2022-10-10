@@ -18,7 +18,6 @@ function Set-TFAlias {
     )
     switch ($PSCmdlet.ParameterSetName) {
         'Initialize' {
-            # initialize
             InvokeTFAliasInitialize
             return
         }
@@ -53,33 +52,44 @@ Usage:
   -Help               Show this message
 
 Example:
-  PS > Set-TFAlias -Initialize     # Initialize and download the latest version
+  PS > Set-TFAlias -Initialize     # Initialize alias
+  PS > Set-TFAlias -Latast         # Download latest version and set alias
   PS > terraform version
   Terraform vX.Y.Z
-  PS > Set-TFAlias -Version 1.2.3  # download ver.1.2.3 and set alias
+  PS > Set-TFAlias -Version 1.2.3  # Download ver.1.2.3 and set alias
   PS > terraform version
   Terraform v1.2.3
 "@ | Out-Host
 }
 
 function InvokeTFAliasInitialize([Switch]$Update) {
-    $aliasRoot = GetTFAliasRoot
+    $ailasAppPath = GetTFAliasAppPath
 
     # Check Alias path
-    if (-not (Test-Path -LiteralPath $aliasRoot -PathType Container)) {
-        WriteInfo ("Create TFAlias path : {0}" -f $aliasRoot)
-        [void](New-Item -Path $aliasRoot -ItemType Directory)
+    if (-not (Test-Path -LiteralPath $ailasAppPath -PathType Container)) {
+        WriteInfo ("Create path : {0}" -f $ailasAppPath)
+        [void](New-Item -Path $ailasAppPath -ItemType Directory)
     }
 
+    # Check current version
+    $version = Get-TFAlias -Current
+    if ($version) {
+        # Set current version silently
+        Write-Verbose ('Use current Terraform v{0}.' -f ($version.Version))
+        [void](InvokeTFAliasVersion -Version $version.Version *>&1)
+        return
+    }
+    WriteInfo ('Use the latest version of Terraform.')
     InvokeTFAliasLatestVersion
 }
 
 function InvokeTFAliasLatestVersion () {
-    $aliasRoot = GetTFAliasRoot
+    $ailasAppPath = GetTFAliasAppPath
 
     # Check Alias path
-    if (-not (Test-Path -LiteralPath $aliasRoot -PathType Container)) {
-        Write-Warning ("Alias path {0} not found. Do Set-TFAlias -Initialize first." -f $aliasRoot)
+    if (-not (Test-Path -LiteralPath $ailasAppPath -PathType Container)) {
+        Write-Warning ("Alias path {0} not found." -f $ailasAppPath)
+        Write-Warning "Do Set-TFAlias -Initialize first."
         return  
     }
 
@@ -90,13 +100,19 @@ function InvokeTFAliasLatestVersion () {
 }
 
 function InvokeTFAliasVersion ([semver]$Version) {
-    $aliasRoot = GetTFAliasRoot
-    $ailasAppPath = Join-Path $aliasRoot 'terraform'
+    $ailasAppPath = GetTFAliasAppPath
 
     # Check Alias path
-    if (-not (Test-Path -LiteralPath $aliasRoot -PathType Container)) {
-        Write-Warning ("Alias root path {0} not found. Do Set-TFAlias -Initialize first." -f $aliasRoot)
-        return  
+    if (-not (Test-Path -LiteralPath $ailasAppPath -PathType Container)) {
+        Write-Warning ("Alias path {0} not found." -f $ailasAppPath)
+        Write-Warning "Do Set-TFAlias -Initialize first."
+        return
+    }
+
+    # Check version exists
+    if (-not (Find-TFRelease -Version $Version)) {
+        Write-Warning ("Terraform v{0} not found." -f $Version)
+        return
     }
 
     # Check terraform binary
@@ -111,6 +127,9 @@ function InvokeTFAliasVersion ([semver]$Version) {
         WriteInfo ("Install Terraform v{0} to {1}..." -f $Version, $versionPath)
         Save-TFBinary -Version $Version -DestinationPath $versionPath  
     }
+
+    # update version file
+    UpdateVersionFile -Version $Version
 
     # Set alias
     Writeinfo ("Set the v{0} terraform alias." -f $Version)
@@ -129,6 +148,12 @@ function InvokeTFAliasFromVersionFile () {
         return
     }
     InvokeTFAliasVersion -Version $version
+}
+
+function UpdateVersionFile ([semver]$Version) {
+    $versionFilePath = GetTFAliasVersionFilePath
+    Write-Verbose ("Update version {0} to {1}" -f $Version, $versionFilePath)
+    $Version.ToString() | Out-File -FilePath $versionFilePath -NoNewline
 }
 
 function DoSetAlias ([string]$BinaryPath) {

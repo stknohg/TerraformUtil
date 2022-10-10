@@ -48,7 +48,10 @@ function Find-TFRelease {
             Write-Verbose "Invoke-RestMethod to $uri"
             $response = Invoke-RestMethod -Uri $uri
         } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-            Write-Warning ("StatusCode : {0} {1}" -f [int]$_.Exception.Response.StatusCode, $_)
+            # Show warning exclude 404 error.
+            if (-not ($PSCmdlet.ParameterSetName -eq 'Version' -and [int]$_.Exception.Response.StatusCode -eq 404 )) {
+                Write-Warning ("StatusCode : {0} {1}" -f [int]$_.Exception.Response.StatusCode, $_)
+            }
             return
         } catch {
             Write-Error $_

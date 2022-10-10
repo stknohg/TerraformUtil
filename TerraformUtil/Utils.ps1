@@ -71,6 +71,21 @@ class TerraformReleaseBuild {
     }   
 }
 
+class TFAliasVersion {
+
+    [bool]$Current;
+
+    [semver]$Version;
+
+    [string]$Path;
+
+    TFAliasVersion([bool]$Current, [semver]$Version, [string]$Path) {
+        $this.Current = $Current
+        $this.Version = $Version
+        $this.Path = $Path
+    }
+}
+
 function WriteInfo ([string]$message) {
     Write-Host $message -ForegroundColor Green
 }
@@ -109,7 +124,7 @@ function GetTerraformBinaryName () {
     if ($IsWindows) { 'terraform.exe' } else { 'terraform' }
 }
 
-function GetTFAliasRoot() {
+function GetTFAliasRoot () {
     if (-not ($env:TFALIAS_PATH)) {
         return (Join-Path $HOME '.tfalias')
     }
@@ -118,4 +133,12 @@ function GetTFAliasRoot() {
         return (Join-Path $HOME '.tfalias')
     }
     return $env:TFALIAS_PATH
+}
+
+function GetTFAliasAppPath () {
+    return Join-Path -Path (GetTFAliasRoot) -ChildPath 'terraform'
+}
+
+function GetTFAliasVersionFilePath () {
+    return Join-Path -Path (GetTFAliasAppPath) -ChildPath 'version'
 }
