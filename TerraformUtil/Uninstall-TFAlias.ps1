@@ -24,7 +24,7 @@ function Uninstall-TFAlias {
         }
 
         # Get version path
-        $versionPath = Join-Path $ailasAppPath "$Version"
+        $versionPath = [System.IO.Path]::Join( $ailasAppPath, "$Version")
         if (-not(Test-Path -LiteralPath $versionPath -PathType Container) ) {
             Write-Warning ("Terraform v{0} is not installed." -f $Version)
             return
@@ -39,8 +39,6 @@ function Uninstall-TFAlias {
         if ($currentAlias -and $currentAlias.Version -eq $Version) {
             Write-Verbose "Remove version file."
             UninstallVersionFile
-            Write-Verbose "Do Remove-Alias -Name 'terraform' -Scope Global"
-            Remove-Alias -Name 'terraform' -Scope Global
         }
     }
 }

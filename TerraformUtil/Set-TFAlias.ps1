@@ -11,8 +11,6 @@ function Set-TFAlias {
         [Switch]$Latest,
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
         [semver]$Version,
-        [Parameter(ParameterSetName = 'FromVersionFile', Mandatory = $true)]
-        [Switch]$FromVersionFile,
         [Parameter(ParameterSetName = 'Help', Mandatory = $false)]
         [Switch]$Help
     )
@@ -29,10 +27,6 @@ function Set-TFAlias {
             InvokeTFAliasVersion -Version $Version
             return
         }
-        'FromVersionFile' {
-            InvokeTFAliasFromVersionFile 
-            return
-        }
         Default {
             ShowHelpMessage
         }
@@ -47,8 +41,6 @@ Usage:
   -Initialize         Setup TFAlias environment
   -Latast             Set alias to the latest Terraform version
   -Version X.Y.Z      Set alias to Terraform ver.X.Y.Z
-  -FromVersionFile    Set alias from .terraform-version file
-    * Currently supported "latest", "latest:<regex>", "x.y.z"
   -Help               Show this message
 
 Example:
@@ -64,12 +56,20 @@ Example:
 
 function InvokeTFAliasInitialize([Switch]$Update) {
     $ailasAppPath = GetTFAliasAppPath
+    $shimBinPath = GetShimBinPath
 
     # Check Alias path
     if (-not (Test-Path -LiteralPath $ailasAppPath -PathType Container)) {
         WriteInfo ("Create path : {0}" -f $ailasAppPath)
         [void](New-Item -Path $ailasAppPath -ItemType Directory)
     }
+    # Check shim bin path
+    if (-not (Test-Path -LiteralPath $shimBinPath -PathType Container)) {
+        WriteInfo ("Create path : {0}" -f $shimBinPath)
+        [void](New-Item -Path $shimBinPath -ItemType Directory)
+    }
+    # Copy templates if nessecary
+    InstallTemplateFiles -Destination $shimBinPath
 
     # Check current version
     $version = Get-TFAlias -Current
@@ -133,21 +133,42 @@ function InvokeTFAliasVersion ([semver]$Version) {
 
     # Set alias
     Writeinfo ("Set the v{0} terraform alias." -f $Version)
-    DoSetAlias -BinaryPath $versionBinaryPath
+    DoSetAlias
 }
 
-function InvokeTFAliasFromVersionFile () {
-    # Check .terraform-version exists
-    if (-not (Test-Path -LiteralPath './.terraform-version' -PathType Leaf)) {
-        Write-Warning (".terraform-version file not found.")
-        return  
-    }
-    
-    $version = Get-TFVersionFromFile
-    if ($null -eq $version) {
+function GetShimBinPath () {
+    return [System.IO.Path]::Join((GetTFAliasRoot), 'bin')
+}
+
+function CopyFileWithTimeStampCheck ([string]$ParentPath, [string]$FileName, [string]$Destination) {
+    $sourcePath = [System.IO.Path]::Combine($ParentPath, $FileName)
+    $destPath = [System.IO.Path]::Combine($Destination, $FileName)
+    if (-not [System.IO.File]::Exists($sourcePath)) {
+        Write-Warning ('Source file {0} not found.' -f $sourcePath)
         return
     }
-    InvokeTFAliasVersion -Version $version
+    if (-not [System.IO.File]::Exists($destPath)) {
+        Write-Verbose ('Copy {0} to {1}' -f $sourcePath, $destPath)
+        [System.IO.File]::Copy($sourcePath, $destPath, $true)
+        return
+    }
+    if (-not ([System.IO.File]::GetLastWriteTime($sourcePath) -eq [System.IO.File]::GetLastWriteTime($destPath))) {
+        Write-Verbose ('Copy {0} to {1}' -f $sourcePath, $destPath)
+        [System.IO.File]::Copy($sourcePath, $destPath, $true)
+        return
+    }
+}
+
+function InstallTemplateFiles ([string]$Destination) {
+    $templatePath = [System.IO.Path]::Join($PSScriptRoot, 'Templates')
+    # All platforms
+    CopyFileWithTimeStampCheck -ParentPath $templatePath -FileName 'terraform.ps1' -Destination $Destination
+    # WindowsOnly
+    if ($IsWindows) {
+        CopyFileWithTimeStampCheck -ParentPath $templatePath -FileName 'terraform.cmd' -Destination $Destination
+        CopyFileWithTimeStampCheck -ParentPath $templatePath -FileName 'tfalias.ps1' -Destination $Destination
+        CopyFileWithTimeStampCheck -ParentPath $templatePath -FileName 'tfalias.cmd' -Destination $Destination
+    }
 }
 
 function UpdateVersionFile ([semver]$Version) {
@@ -156,9 +177,10 @@ function UpdateVersionFile ([semver]$Version) {
     $Version.ToString() | Out-File -FilePath $versionFilePath -NoNewline
 }
 
-function DoSetAlias ([string]$BinaryPath) {
+function DoSetAlias () {
     # Set-Alias global
-    Set-Alias -Name 'terraform' -Value $BinaryPath -Scope Global    
+    $targetPath = [System.IO.Path]::Join((GetShimBinPath), 'terraform.ps1')
+    Set-Alias -Name 'terraform' -Value $targetPath -Scope Global    
     # Register auto completion
     Register-TFArgumentCompleter
 }

@@ -15,10 +15,20 @@ InModuleScope 'TerraformUtil' {
 
     Describe "Set-TFAlias unit tests" {
 
-        It "Should saved Terraform binary after -Initialize" {
+        It "Should saved proper files and alias after -Initialize" {
             Set-TFAlias -Initialize
-            $expectedPath = "$env:TFALIAS_PATH\terraform\$LATEST_VERSION\terraform.exe"
-            Test-Path -Path $expectedPath | Should -BeTrue
+            # Latest Terraform binary
+            Test-Path -Path "$env:TFALIAS_PATH\terraform\$LATEST_VERSION\terraform.exe" | Should -BeTrue
+            # terraform.ps1
+            Test-Path -Path "$env:TFALIAS_PATH\bin\terraform.ps1" | Should -BeTrue
+            # others
+            if ($IsWindows) {
+                Test-Path -Path "$env:TFALIAS_PATH\bin\terraform.cmd" | Should -BeTrue
+                Test-Path -Path "$env:TFALIAS_PATH\bin\tfalias.cmd" | Should -BeTrue
+                Test-Path -Path "$env:TFALIAS_PATH\bin\tfalias.ps1" | Should -BeTrue
+            }
+            # Alias
+            $expectedPath = "$env:TFALIAS_PATH\bin\terraform.ps1"
             $actual = Get-Alias terraform
             $actual.Definition | Should -Be $expectedPath
         }
@@ -27,8 +37,6 @@ InModuleScope 'TerraformUtil' {
             Set-TFAlias -Version 1.2.3
             $expectedPath = "$env:TFALIAS_PATH\terraform\1.2.3\terraform.exe"
             Test-Path -Path $expectedPath | Should -BeTrue
-            $actual = Get-Alias terraform
-            $actual.Definition | Should -Be $expectedPath
         }
 
         It "Should error when invalid -Version selected" {
@@ -37,57 +45,12 @@ InModuleScope 'TerraformUtil' {
 
         It "Should show proper terraform version with -Latest" {
             Set-TFAlias -Version 1.2.3
-            $expectedPath = "$env:TFALIAS_PATH\terraform\1.2.3\terraform.exe"
-            $actual = Get-Alias terraform
-            $actual.Definition | Should -Be $expectedPath
+            GetInstalledTerraformVersion | Should -Be '1.2.3'
 
             Set-TFAlias -Latest
-            $expectedPath = "$env:TFALIAS_PATH\terraform\$LATEST_VERSION\terraform.exe"
-            $actual = Get-Alias terraform
-            $actual.Definition | Should -Be $expectedPath
+            GetInstalledTerraformVersion | Should -Be $LATEST_VERSION
         }
 
-        It "Should show warning when .terraform-version file not found with -FromVersionFile" {
-            if (Test-Path -Path './.terraform-version' -PathType Leaf) {Remove-Item -LiteralPath './.terraform-version'}
-            Set-TFAlias -FromVersionFile *>&1 | Should -Be ".terraform-version file not found."
-        }
-
-        It "Should saved latest terraform version with -FromVersionFile (latest)" {
-            Write-Output ' latest ' | Out-File -FilePath '.\.terraform-version'
-            
-            Set-TFAlias -FromVersionFile
-            $expectedPath = "$env:TFALIAS_PATH\terraform\$LATEST_VERSION\terraform.exe"
-            $actual = Get-Alias terraform
-            $actual.Definition | Should -Be $expectedPath
-        }
-
-        It "Should saved proper terraform version with -FromVersionFile (latest:^0.8)" {
-            Write-Output ' latest:^0.8 ' | Out-File -FilePath '.\.terraform-version'
-            
-            Set-TFAlias -FromVersionFile
-            $expectedPath = "$env:TFALIAS_PATH\terraform\0.8.8\terraform.exe"
-            $actual = Get-Alias terraform
-            $actual.Definition | Should -Be $expectedPath
-        }
-
-        It "Should saved proper terraform version with -FromVersionFile (1.2.3)" {
-            Write-Output ' 1.2.3 ' | Out-File -FilePath '.\.terraform-version'
-            
-            Set-TFAlias -FromVersionFile
-            $expectedPath = "$env:TFALIAS_PATH\terraform\1.2.3\terraform.exe"
-            $actual = Get-Alias terraform
-            $actual.Definition | Should -Be $expectedPath
-        }
-
-        It "Should show warning when .terraform-version has latest-allowed" {
-            Write-Output ' latest-allowed ' | Out-File -FilePath '.\.terraform-version'
-            Set-TFAlias -FromVersionFile *>&1 | Should -Be "latest-allowed is not supported."
-        }
-
-        It "Should show warning when .terraform-version has min-required" {
-            Write-Output ' min-required ' | Out-File -FilePath '.\.terraform-version'
-            Set-TFAlias -FromVersionFile *>&1 | Should -Be "min-required is not supported."
-        }
     }
 
     AfterAll {
