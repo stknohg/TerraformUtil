@@ -124,43 +124,11 @@ function InvokeTFAliasFromVersionFile () {
         return  
     }
     
-    # TODO : implement more formal parser
-    $rowString = (Get-Content -LiteralPath './.terraform-version' | Select-Object -First 1).Trim()
-    if ('latest-allowed' -eq $rowString) {
-        Write-Warning 'latest-allowed is not supported.'
-        return 
-    }
-    if ('min-required' -eq $rowString) {
-        Write-Warning 'min-required is not supported.'
-        return 
-    }
-    if ('latest' -eq $rowString) {
-        Write-Verbose 'Detect the latest version'
-        InvokeTFAliasLatestVersion
-        return 
-    }
-    if ($rowString -match '^latest:(?<match_exp>.+)$' ) {
-        $matchExp = $Matches.match_exp
-        Write-Verbose ("version match expression : {0}" -f $matchExp)
-        # exclude prerelease
-        $matchVersion = Find-TFVersion -Filter { "$_" -match $matchExp -and (-not $_.PreReleaseLabel) } -Take 1
-        if (-not $matchVersion) {
-            Write-Warning ('Failed to detect Terraform version. (expression = {0})' -f $matchExp)
-            return
-        }
-        Write-Verbose ('Detect version {0}' -f $matchVersion)
-        InvokeTFAliasVersion -Version $matchVersion
-        return 
-    }
-    try {
-        $version = [semver]$rowString
-        Write-Verbose ('Detect version {0}' -f $version)
-        InvokeTFAliasVersion -Version $version
+    $version = Get-TFVersionFromFile
+    if ($null -eq $version) {
         return
-    } catch {
-        # do nothing
     }
-    Write-Warning ('Failed to parse .terraform-version : {0}' -f $rowString)
+    InvokeTFAliasVersion -Version $version
 }
 
 function DoSetAlias ([string]$BinaryPath) {
