@@ -10,28 +10,24 @@ function Get-TFAlias {
     )
 
     # Check Alias path
-    $aliasRoot = GetTFAliasRoot
-    $ailasAppPath = Join-Path $aliasRoot 'terraform'
-    if (-not (Test-Path -LiteralPath $aliasRoot -PathType Container)) {
-        Write-Warning ("Alias path {0} not found. Do nothing." -f $aliasRoot)
-        return
-    }
+    $ailasAppPath = GetTFAliasAppPath
     if (-not (Test-Path -LiteralPath $ailasAppPath -PathType Container)) {
-        Write-Warning ("Alias path {0} not found. Do nothing." -f $ailasAppPath)
+        Write-Warning ("Alias path {0} not found." -f $ailasAppPath)
+        Write-Warning "Do Set-TFAlias -Initialize first."
         return
     }
 
-    # Get current alias
-    $currentAlias = Get-Alias terraform -ErrorAction SilentlyContinue
+    # Get current version
+    $currentVersion = GetCurrentAliasVersion
 
     # Get installed versions
     $installedVersions = Get-ChildItem -LiteralPath $ailasAppPath -Directory | ForEach-Object {
         try {
-            [PSCustomObject]@{
-                Current = if ($currentAlias -and (Split-Path (Get-Alias terraform -ErrorAction SilentlyContinue).Definition) -eq $_.FullName) { $true } else { $false }
-                Version = [semver]($_.Name)
-                Path    = Join-Path $_.FullName (GetTerraformBinaryName)
-            }
+            [TFAliasVersion]::new(
+                $(if ($currentVersion -and "$currentVersion" -eq $_.Name) { $true } else { $false }),
+                [semver]($_.Name),
+                $(Join-Path $_.FullName (GetTerraformBinaryName))
+            )
         } catch {
             # do nothing
         }
@@ -44,5 +40,17 @@ function Get-TFAlias {
         Default {
             $installedVersions | Sort-Object Version -Descending
         }
+    }
+}
+
+function GetCurrentAliasVersion () {
+    $verFilePath = GetTFAliasVersionFilePath
+    if (-not (Test-Path -LiteralPath $verFilePath -PathType Leaf)) {
+        return
+    }
+    try {
+        return [semver]@(Get-Content -LiteralPath $verFilePath)[0]
+    } catch {
+        # do nothing
     }
 }

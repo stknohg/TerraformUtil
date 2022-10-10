@@ -16,14 +16,10 @@ function Uninstall-TFAlias {
         Write-Verbose ('Start uninstall Terraform v{0}' -f $Version)
 
         # Check Alias path
-        $aliasRoot = GetTFAliasRoot
-        $ailasAppPath = Join-Path $aliasRoot 'terraform'
-        if (-not (Test-Path -LiteralPath $aliasRoot -PathType Container)) {
-            Write-Warning ("Alias path {0} not found. Do nothing." -f $aliasRoot)
-            return
-        }
+        $ailasAppPath = GetTFAliasAppPath
         if (-not (Test-Path -LiteralPath $ailasAppPath -PathType Container)) {
-            Write-Warning ("Alias path {0} not found. Do nothing." -f $ailasAppPath)
+            Write-Warning ("Alias path {0} not found." -f $ailasAppPath)
+            Write-Warning "Do Set-TFAlias -Initialize first."
             return
         }
 
@@ -35,14 +31,23 @@ function Uninstall-TFAlias {
         }
 
         # Uninstall
+        $currentAlias = Get-TFAlias -Current
         Writeinfo ('Uninstall Terraform v{0}' -f $Version)
         # remove directory
         Remove-Item -LiteralPath $versionPath -Recurse -ErrorAction SilentlyContinue
         # remove alias
-        $currentAlias = Get-Alias terraform -ErrorAction SilentlyContinue
-        if ($currentAlias -and (Split-Path (Get-Alias terraform -ErrorAction SilentlyContinue).Definition) -eq $versionPath) {
+        if ($currentAlias -and $currentAlias.Version -eq $Version) {
+            Write-Verbose "Remove version file."
+            UninstallVersionFile
             Write-Verbose "Do Remove-Alias -Name 'terraform' -Scope Global"
             Remove-Alias -Name 'terraform' -Scope Global
         }
+    }
+}
+
+function UninstallVersionFile () {
+    $versionFilePath = GetTFAliasVersionFilePath
+    if (Test-Path -LiteralPath $versionFilePath -PathType Leaf) {
+        Remove-Item -LiteralPath $versionFilePath
     }
 }

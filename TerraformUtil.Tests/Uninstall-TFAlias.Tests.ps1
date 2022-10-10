@@ -13,6 +13,7 @@ InModuleScope 'TerraformUtil' {
     Describe "Uninstall-TFAlias unit tests" {
         
         It "Should uninstall proper alias" {
+            Set-TFAlias -Initialize
             Set-TFAlias -Version 1.2.5
             Set-TFAlias -Version 1.2.3
             { Uninstall-TFAlias -Version 1.2.3 } | Should -Not -Throw
@@ -22,6 +23,7 @@ InModuleScope 'TerraformUtil' {
         }
 
         It "Should uninstall all alias" {
+            Set-TFAlias -Initialize
             Set-TFAlias -Version 1.2.5
             Set-TFAlias -Version 1.2.3
             { Get-TFAlias | Uninstall-TFAlias } | Should -Not -Throw

@@ -31,6 +31,10 @@ InModuleScope 'TerraformUtil' {
             $actual.Definition | Should -Be $expectedPath
         }
 
+        It "Should error when invalid -Version selected" {
+            Set-TFAlias -Version 9999.9.9 *>&1 | Should -Be "Terraform v9999.9.9 not found."
+        }
+
         It "Should show proper terraform version with -Latest" {
             Set-TFAlias -Version 1.2.3
             $expectedPath = "$env:TFALIAS_PATH\terraform\1.2.3\terraform.exe"
