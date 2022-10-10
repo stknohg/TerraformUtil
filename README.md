@@ -44,6 +44,9 @@ CommandType Name      Definition
       Alias terraform C:\Users\stknohg\.tfalias\bin\terraform.ps1
 ```
 
+> **Note**  
+> Call `Set-TFAlias -Initialize` in $PROFILE for persistence.
+
 ### Get-TFInstalledAlias
 
 Get installed `terraform` alias.
@@ -86,24 +89,6 @@ Unregister auto-completer for `terraform` command.
 UnRegister-TFArgumentCompleter
 ```
 
-### Test-TFVersion
-
-Test installed Terraform version is the latest version.  
-This function is same as `terraform version` command, but you can treat version object with `-PassThru` parameter.
-
-```powershell
-# Same as "terraform version"
-C:\ > Test-TFVersion
-Newer version Terraform vX.Y.Z is available. (Current : v1.2.3)
-
-# Returns version object with -PassThru parameter
-C:\ > Test-TFVersion -PassThru
-
-Result CurrentVersion LatestVersion
------- -------------- -------------
- False 1.2.3          X.Y.Z
-```
-
 ### Find-TFRelease
 
 Get Terraform release information using [Hashicorp Releases API](https://releases.hashicorp.com/docs/api/v1/#operation/listReleasesV1).
@@ -117,7 +102,7 @@ C:\ > Find-TFRelease -Latest
 
 Version PreRelease State     Created              Updated
 ------- ---------- -----     -------              -------
-1.3.0   False      supported 9/21/2022 1:58:58 PM 9/21/2022 1:58:58 PM
+1.3.2   False      supported 10/6/2022 4:57:24 PM 10/6/2022 4:57:24 PM
 ```
 
 ### Find-TFVersion
@@ -130,9 +115,9 @@ C:\ > Find-TFVersion
 
 Major  Minor  Patch  PreReleaseLabel BuildLabel
 -----  -----  -----  --------------- ----------
+1      3      2
+1      3      1
 1      3      0
-1      3      0      rc1
-1      3      0      beta1
 # ... snip ...
 0      2      0
 0      1      1
@@ -151,6 +136,24 @@ C:\ > Find-TFVersion -Filter { $_ -lt '1.0.0' -and (-not $_.PreReleaseLabel) } -
 Version PreRelease State     Created             Updated
 ------- ---------- -----     -------             -------
 0.15.5  False      supported 6/2/2021 6:01:19 PM 6/2/2021 6:01:19 PM
+```
+
+### Test-TFVersion
+
+Test installed Terraform version is the latest version.  
+This function is same as `terraform version` command, but you can treat version object with `-PassThru` parameter.
+
+```powershell
+# Same as "terraform version"
+C:\ > Test-TFVersion
+Newer version Terraform vX.Y.Z is available. (Current : v1.2.3)
+
+# Returns version object with -PassThru parameter
+C:\ > Test-TFVersion -PassThru
+
+Result CurrentVersion LatestVersion
+------ -------------- -------------
+ False 1.2.3          X.Y.Z
 ```
 
 ### Save-TFBinary
