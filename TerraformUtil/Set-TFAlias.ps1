@@ -12,7 +12,11 @@ function Set-TFAlias {
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
         [semver]$Version,
         [Parameter(ParameterSetName = 'Help', Mandatory = $false)]
-        [Switch]$Help
+        [Switch]$Helps,
+        [Parameter(ParameterSetName = 'Initialize', Mandatory = $false)]
+        [Parameter(ParameterSetName = 'Latest', Mandatory = $false)]
+        [Parameter(ParameterSetName = 'Version', Mandatory = $false)]
+        [Switch]$Force
     )
     switch ($PSCmdlet.ParameterSetName) {
         'Initialize' {
@@ -20,11 +24,11 @@ function Set-TFAlias {
             return
         }
         'Latest' {
-            InvokeTFAliasLatestVersion
+            InvokeTFAliasLatestVersion -IsForce $Force
             return
         }
         'Version' {
-            InvokeTFAliasVersion -Version $Version
+            InvokeTFAliasVersion -Version $Version -IsForce $Force
             return
         }
         Default {
@@ -54,7 +58,7 @@ Example:
 "@ | Out-Host
 }
 
-function InvokeTFAliasInitialize([Switch]$Update) {
+function InvokeTFAliasInitialize() {
     $ailasAppPath = GetTFAliasAppPath
     $shimBinPath = GetShimBinPath
 
@@ -76,14 +80,14 @@ function InvokeTFAliasInitialize([Switch]$Update) {
     if ($version) {
         # Set current version silently
         Write-Verbose ('Use current Terraform v{0}.' -f ($version.Version))
-        [void](InvokeTFAliasVersion -Version $version.Version *>&1)
+        [void](InvokeTFAliasVersion -Version $version.Version -IsForce $true 6>&1)
         return
     }
     WriteInfo ('Use the latest version of Terraform.')
-    InvokeTFAliasLatestVersion
+    InvokeTFAliasLatestVersion -IsForce $true
 }
 
-function InvokeTFAliasLatestVersion () {
+function InvokeTFAliasLatestVersion ([bool]$IsForce) {
     $ailasAppPath = GetTFAliasAppPath
 
     # Check Alias path
@@ -96,10 +100,10 @@ function InvokeTFAliasLatestVersion () {
     # get the latest version
     $version = Find-TFRelease -Latest | Select-Object -ExpandProperty Version
     Writeinfo ("Terraform v{0} is the latest version." -f $version)
-    InvokeTFAliasVersion -Version $version 
+    InvokeTFAliasVersion -Version $version -IsForce $IsForce
 }
 
-function InvokeTFAliasVersion ([semver]$Version) {
+function InvokeTFAliasVersion ([semver]$Version, [bool]$IsForce) {
     $ailasAppPath = GetTFAliasAppPath
 
     # Check Alias path
@@ -113,6 +117,21 @@ function InvokeTFAliasVersion ([semver]$Version) {
     if (-not (Find-TFRelease -Version $Version)) {
         Write-Warning ("Terraform v{0} not found." -f $Version)
         return
+    }
+
+    # Check .terraform-version file
+    if (-not $IsForce) {
+        $resultFromFile = GetVersionFromVersionFile
+        if ($resultFromFile.Version) {
+            # override
+            Write-Warning ($resultFromFile.Message)
+            Write-Warning ('Override version {0} to {1}' -f $Version, ($resultFromFile.Version) )
+            $Version = $resultFromFile.Version
+        }
+        if (-not $resultFromFile.Version -and -not [string]::IsNullOrEmpty( $resultFromFile.FilePath) ) {
+            # something failed. show warning only
+            Write-Warning ($resultFromFile.Message)
+        }
     }
 
     # Check terraform binary
@@ -168,6 +187,41 @@ function InstallTemplateFiles ([string]$Destination) {
         CopyFileWithTimeStampCheck -ParentPath $templatePath -FileName 'terraform.cmd' -Destination $Destination
         CopyFileWithTimeStampCheck -ParentPath $templatePath -FileName 'tfalias.ps1' -Destination $Destination
         CopyFileWithTimeStampCheck -ParentPath $templatePath -FileName 'tfalias.cmd' -Destination $Destination
+    }
+}
+
+function GetVersionFromVersionFile () {
+    $testPath = $pwd.Path
+    do {
+        if (Test-Path -Path ([System.IO.Path]::Join($testPath, '.terraform-version')) -PathType Leaf) {
+            break
+        }
+        $testPath = [System.IO.Path]::GetDirectoryName($testPath)
+    } while (-not [string]::IsNullOrEmpty($testPath))
+    # .terraform-version not found
+    if ([string]::IsNullOrEmpty($testPath)) {
+        Write-Verbose '.terraform-version not found'
+        return [PSCustomObject]@{
+            Version  = $null
+            FilePath = ''
+            Message  = '.terraform-version not found'
+        }
+    }
+    # .terraform-version found
+    Write-Verbose ('.terraform-version is detected at {0}' -f $testPath)
+    $fileVersion = Get-TFVersionFromFile -LiteralPath ([System.IO.Path]::Join($testPath, '.terraform-version'))
+    if (-not $fileVersion) {
+        return [PSCustomObject]@{
+            Version  = $null
+            FilePath = [System.IO.Path]::Join($testPath, '.terraform-version')
+            Message  = '.terraform-version is detected, but failed to parse.'
+        }
+
+    }
+    return [PSCustomObject]@{
+        Version  = $fileVersion
+        FilePath = [System.IO.Path]::Join($testPath, '.terraform-version')
+        Message  = 'Preferred version.{0} is detected from {1}.' -f $fileVersion, ([System.IO.Path]::Join($testPath, '.terraform-version'))
     }
 }
 

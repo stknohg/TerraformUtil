@@ -15,6 +15,11 @@ InModuleScope 'TerraformUtil' {
 
     Describe "Set-TFAlias unit tests" {
 
+        BeforeEach {
+            # cleanup .terraform-version
+            if (Test-Path -Path './.terraform-version' -PathType Leaf ) { Remove-Item -LiteralPath './.terraform-version' }
+        }
+
         It "Should saved proper files and alias after -Initialize" {
             Set-TFAlias -Initialize
             # Latest Terraform binary
@@ -51,6 +56,16 @@ InModuleScope 'TerraformUtil' {
             GetInstalledTerraformVersion | Should -Be $LATEST_VERSION
         }
 
+        It "Should override terraform version when .terraform-version exists" {
+            '1.2.5' | Out-File -FilePath './.terraform-version' -NoNewline
+
+            Set-TFAlias -Version 1.2.3
+            GetInstalledTerraformVersion | Should -Be '1.2.5'
+
+            Set-TFAlias -Latest
+            GetInstalledTerraformVersion | Should -Be '1.2.5'
+        }
+        
     }
 
     AfterAll {
