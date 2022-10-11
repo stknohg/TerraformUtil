@@ -1,20 +1,25 @@
 #!/usr/bin/env pwsh
-#Requires -Version 7.0.0
-#Requires -Modules TerraformUtil
+#Requires -Version 5.0.0
 Set-StrictMode -Version 3.0
+# Redirect Windows PowerShell to PowerShell 7
+if ($PSVersionTable.PSVersion.Major -le 5) {
+    pwsh -NonInteractive -NoProfile -Command "$($Script:MyInvocation.MyCommand.Path)" $args
+    exit $LASTEXITCODE
+}
 <#
     tfalias.ps1 : TerraformUtil for command prompt
 #>
 
 function ShowHelp () {
     @"
-tfalias ver.{0}
+tfalias
 
 Usage:
   tfalias use [version]  Install and use a specific version of Terraform
   tfalias list           List installed Terraform versions
   tfalias list-remote    List all installable versions
   tfalias uninstall      Uninstall a specific version of Terraform
+  tralias --version      Show version
 
 Example
   C:\> tfalias use latest
@@ -22,7 +27,12 @@ Example
   C:\> tfalias list
   C:\> tfalias list-remote
   C:\> tfalias uninstall 1.2.3
-"@ -f (Get-Module TerraformUtil).Version | Out-Host
+"@ | Out-Host
+}
+
+function ShowVersion () {
+    # Note : loading module is slow, so separeted --version command.
+    "tfalias ver.{0}" -f (Get-InstalledModule TerraformUtil).Version | Out-Host
 }
 
 function Main () {
@@ -69,9 +79,14 @@ function Main () {
             Get-TFInstalledAlias | ForEach-Object {
                 "{0} {1}" -f $(if ($_.Current) { '*' } else { ' ' }), ($_.Version.ToString())
             }
+            return
         }
         'list-remote' {
             Find-TFVersion | ForEach-Object { $_.ToString() }
+        }
+        { $_ -in ('--version', '-V') } {
+            ShowVersion
+            return
         }
         Default {
             ShowHelp

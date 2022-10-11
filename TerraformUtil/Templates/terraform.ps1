@@ -1,7 +1,11 @@
 #!/usr/bin/env pwsh
-#Requires -Version 7.0.0
-#Requires -Modules TerraformUtil
+#Requires -Version 5.0.0
 Set-StrictMode -Version 3.0
+# Redirect Windows PowerShell to PowerShell 7
+if ($PSVersionTable.PSVersion.Major -le 5) {
+    pwsh -NonInteractive -NoProfile -Command "$($Script:MyInvocation.MyCommand.Path)" $args
+    exit $LASTEXITCODE
+}
 <#
     terraform.ps1 : Shim for terraform binary.
 #>
