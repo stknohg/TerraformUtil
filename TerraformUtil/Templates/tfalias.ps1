@@ -76,13 +76,20 @@ function Main () {
             return
         }
         'list' {
-            Get-TFInstalledAlias | ForEach-Object {
-                "{0} {1}" -f $(if ($_.Current) { '*' } else { ' ' }), ($_.Version.ToString())
+            if ( @($commandArgs).Where({ $_ -eq '--json' })) {
+                Get-TFInstalledAlias | ForEach-Object { [PSCustomObject]@{ Current = $_.Current; Version = $_.Version.ToString(); Path = $_.Path } } | ConvertTo-Json
+                return
             }
+            Get-TFInstalledAlias | ForEach-Object { "{0} {1}" -f $(if ($_.Current) { '*' } else { ' ' }), ($_.Version.ToString()) }
             return
         }
         'list-remote' {
+            if ( @($commandArgs).Where({ $_ -eq '--json' })) {
+                Find-TFVersion | ForEach-Object { [PSCustomObject]@{ Version = $_.ToString() } } | ConvertTo-Json
+                return
+            }
             Find-TFVersion | ForEach-Object { $_.ToString() }
+            return
         }
         { $_ -in ('--version', '-V') } {
             ShowVersion
