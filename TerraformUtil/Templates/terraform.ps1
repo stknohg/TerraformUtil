@@ -19,13 +19,21 @@ $currentVersion = [semver]@([System.IO.File]::ReadAllLines($verFilePath))[0]
 
 # Check .terraform-version file
 # Note : must use Test-Path to resolve relative path.
-if (Test-Path -Path './.terraform-version' -PathType Leaf) {
-    $fileVersion = Get-TFVersionFromFile
+$testPath = $pwd.Path
+do {
+    if (Test-Path -Path ([System.IO.Path]::Join($testPath, '.terraform-version')) -PathType Leaf) {
+        break
+    }
+    $testPath = [System.IO.Path]::GetDirectoryName($testPath)
+} while (-not [string]::IsNullOrEmpty($testPath))
+if (-not [string]::IsNullOrEmpty($testPath)) {
+    Write-Verbose ('.terraform-version is detected at {0}' -f $testPath)
+    $fileVersion = Get-TFVersionFromFile -LiteralPath ([System.IO.Path]::Join($testPath, '.terraform-version'))
     if (-not $fileVersion) {
         Write-Warning '.terraform-version is detected, but failed to parse.'
     } else {
         if ($currentVersion -ne $fileVersion) {
-            Write-Host ('Preferred version.{0} is detected from .terraform-version' -f $fileVersion) -ForegroundColor Yellow
+            Write-Host ('Preferred version.{0} is detected from {1}.' -f $fileVersion, ([System.IO.Path]::Join($testPath, '.terraform-version'))) -ForegroundColor Yellow
             Set-TFAlias -Version $fileVersion
             $currentVersion = $fileVersion
         }
