@@ -45,7 +45,7 @@ CommandType Name      Definition
 ```
 
 > **Note**  
-> Call `Set-TFAlias -Initialize` in $PROFILE for persistence.
+> Call `Set-TFAlias -Initialize` in [$PROFILE](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles) for persistence.
 
 ### Get-TFInstalledAlias
 
