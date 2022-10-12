@@ -47,6 +47,31 @@ CommandType Name      Definition
 > **Note**  
 > Call `Set-TFAlias -Initialize` in [$PROFILE](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles) for persistence.
 
+#### .terraform-version support
+
+Set-TFAlias supports [.terraform-version](https://github.com/tfutils/tfenv#terraform-version-file) file same as tfenv, but handling of `min-required` and `latest-allowed` differs.  
+
+* [min-required & latest-allowed](https://github.com/tfutils/tfenv#min-required--latest-allowed)
+
+```powershell
+# min-required
+
+# tfenv detect 0.12.3, but Set-TFAlias detect 0.10.0
+terraform {
+  required_version  = "<0.12.3, >= 0.10.0"
+}
+```
+
+```powershell
+# latest-allowed
+
+# tfenv raise error, but Set-TFAlias detect 0.12.2
+terraform {
+  required_version  = "<0.12.3, >= 0.10.0"
+}
+```
+
+
 ### Get-TFInstalledAlias
 
 Get installed `terraform` alias.
