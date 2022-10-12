@@ -163,24 +163,6 @@ Version PreRelease State     Created             Updated
 0.15.5  False      supported 6/2/2021 6:01:19 PM 6/2/2021 6:01:19 PM
 ```
 
-### Test-TFVersion
-
-Test installed Terraform version is the latest version.  
-This function is same as `terraform version` command, but you can treat version object with `-PassThru` parameter.
-
-```powershell
-# Same as "terraform version"
-C:\ > Test-TFVersion
-Newer version Terraform vX.Y.Z is available. (Current : v1.2.3)
-
-# Returns version object with -PassThru parameter
-C:\ > Test-TFVersion -PassThru
-
-Result CurrentVersion LatestVersion
------- -------------- -------------
- False 1.2.3          X.Y.Z
-```
-
 ### Save-TFBinary
 
 Save the specific version Terraform binary file (`terraform.exe` or `terraform`).  
