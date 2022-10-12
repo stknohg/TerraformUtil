@@ -20,7 +20,8 @@ function Get-TFVersionFromFile {
 
     $rowString = @(Get-Content -LiteralPath $LiteralPath)[0].Trim()
     if ('latest-allowed' -eq $rowString) {
-        $requiredValue = GetTerraformRequiredValue -RootPath $($pwd.Path)
+        # -RootPath must be .terraform-version directory.
+        $requiredValue = GetTerraformRequiredValue -RootPath $([System.IO.Path]::GetDirectoryName($LiteralPath))
         if ([string]::IsNullOrEmpty($requiredValue)) {
             Write-Warning '.terraform-version contains "latest-allowed", but "required_version" statement not found.'
             return
@@ -33,7 +34,8 @@ function Get-TFVersionFromFile {
         return $arrowedVersion.AllowedMaxVersion
     }
     if ('min-required' -eq $rowString) {
-        $requiredValue = GetTerraformRequiredValue -RootPath $($pwd.Path)
+        # -RootPath must be .terraform-version directory.
+        $requiredValue = GetTerraformRequiredValue -RootPath $([System.IO.Path]::GetDirectoryName($LiteralPath))
         if ([string]::IsNullOrEmpty($requiredValue)) {
             Write-Warning '.terraform-version contains "min-required", but "required_version" statement not found.'
             return
