@@ -19,6 +19,7 @@ Usage:
   tfalias list           List installed Terraform versions
   tfalias list-remote    List all installable versions
   tfalias uninstall      Uninstall a specific version of Terraform
+  tfalias pin            Write the current version to .terraform-version file
   tralias --version      Show version
 
 Example
@@ -27,6 +28,7 @@ Example
   C:\> tfalias list
   C:\> tfalias list-remote
   C:\> tfalias uninstall 1.2.3
+  C:\> tfalias pin
 "@ | Out-Host
 }
 
@@ -89,6 +91,10 @@ function Main () {
                 return
             }
             Find-TFVersion | ForEach-Object { $_.ToString() }
+            return
+        }
+        'pin' {
+            Set-TFAlias -Pin
             return
         }
         { $_ -in ('--version', '-V') } {

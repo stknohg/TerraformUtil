@@ -11,6 +11,8 @@ function Set-TFAlias {
         [Switch]$Latest,
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
         [semver]$Version,
+        [Parameter(ParameterSetName = 'Pin', Mandatory = $true)]
+        [Switch]$Pin,
         [Parameter(ParameterSetName = 'Help', Mandatory = $false)]
         [Switch]$Helps,
         [Parameter(ParameterSetName = 'Initialize', Mandatory = $false)]
@@ -29,6 +31,10 @@ function Set-TFAlias {
         }
         'Version' {
             InvokeTFAliasVersion -Version $Version -IsForce $Force
+            return
+        }
+        'Pin' {
+            InvokeTFAliasPin
             return
         }
         Default {
@@ -153,6 +159,17 @@ function InvokeTFAliasVersion ([semver]$Version, [bool]$IsForce) {
     # Set alias
     Writeinfo ("Set the v{0} terraform alias." -f $Version)
     DoSetAlias
+}
+
+function InvokeTFAliasPin () {
+    $currentVersion = Get-TFInstalledAlias -Current
+    if (-not $currentVersion) {
+        Write-Warning "Failed to get current version."
+        return
+    }
+    $filePath = [System.IO.Path]::Join($pwd.Path, '.terraform-version')
+    WriteInfo ('Pinned version by writing "{0}" to {1}' -f $currentVersion.Version, $filePath )
+    $currentVersion.Version.ToString() | Out-File -FilePath $filePath -NoNewline -Force
 }
 
 function GetShimBinPath () {

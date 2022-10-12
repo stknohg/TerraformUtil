@@ -66,6 +66,12 @@ InModuleScope 'TerraformUtil' {
             GetInstalledTerraformVersion | Should -Be '1.2.5'
         }
         
+        It "Should save .terraform-version after -Pin" {
+            Set-TFAlias -Version 1.2.3
+            Set-TFAlias -Pin
+            Test-Path -LiteralPath './.terraform-version' -PathType Leaf | Should -BeTrue
+            Get-Content -LiteralPath './.terraform-version' | Should -Be '1.2.3'
+        }
     }
 
     AfterAll {
