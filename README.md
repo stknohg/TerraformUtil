@@ -142,6 +142,9 @@ Version PreRelease State     Created              Updated
 
 Get Terraform versions list by scraping `https://releases.hashicorp.com/terraform` same as `tfenv list-remote`.  
 
+> **Note**  
+> Result values is cached 10 minutes to restrict access to the origin.
+
 ```powershell
 # Get all versions (descending by default)
 C:\ > Find-TFVersion

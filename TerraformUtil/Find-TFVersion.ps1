@@ -1,3 +1,10 @@
+# Simple cache
+$global:g_FTFV_CACHE_MINUTES = 10
+$global:g_FTFV_CACHE = [PSCustomObject]@{
+    ExpireAt = [datetime]::MinValue;
+    Versions = $null;
+}
+
 <#
 .SYNOPSIS
     Find all Terraform versions.
@@ -15,12 +22,23 @@ function Find-TFVersion {
         [int]$Take = [int]::MaxValue
     )
 
-    # scraping https://releases.hashicorp.com/terraform
-    $response = Invoke-WebRequest -Uri https://releases.hashicorp.com/terraform
-    $versions = $response.Links.href | ForEach-Object {
-        if ($_ -match '^/terraform/(?<version>.+)/$') { [semver]($Matches.version) }
+    if ([datetime]::Now -ge $global:g_FTFV_CACHE.ExpireAt) {
+        # scraping https://releases.hashicorp.com/terraform
+        $response = Invoke-WebRequest -Uri https://releases.hashicorp.com/terraform
+        # get versions
+        $versions = $response.Links.href | ForEach-Object {
+            if ($_ -match '^/terraform/(?<version>.+)/$') { [semver]($Matches.version) }
+        }
+        # set cache
+        $global:g_FTFV_CACHE.ExpireAt = [datetime]::Now.AddMinutes($global:g_FTFV_CACHE_MINUTES)
+        $global:g_FTFV_CACHE.Versions = $versions
+        Write-Verbose "Set cache response : ExpireAt = $($global:g_FTFV_CACHE.ExpireAt)"
+    } else {
+        # use cache
+        Write-Verbose "Use cache response : ExpireAt = $($global:g_FTFV_CACHE.ExpireAt)"
+        $versions = $global:g_FTFV_CACHE.Versions
     }
-
+    
     switch ($PSCmdlet.ParameterSetName) {
         'Latest' {
             if ($versions.count -ge 1) {
