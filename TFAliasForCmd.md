@@ -125,7 +125,7 @@ Write the current version to .terraform-version file.
 ```batch
 REM Pin .terraform-version file.
 C:\temp > tfalias pin
-Pinned version by writing "1.3.2" to C:\temp\.terraform-version
+Pinned version by writing "1.2.3" to C:\temp\.terraform-version
 ```
 
 ## Windows PowerShell support

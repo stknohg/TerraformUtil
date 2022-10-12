@@ -71,6 +71,14 @@ terraform {
 }
 ```
 
+You can write `.terraform-version` file using the `Set-TFAlias -Pin` command.  
+
+```powershell
+# Pin .terraform-version file.
+C:\temp > Set-TFAlias -Pin
+Pinned version by writing "1.2.3" to C:\temp\.terraform-version
+```
+
 ### Get-TFInstalledAlias
 
 Get installed `terraform` alias.
