@@ -16,7 +16,7 @@ You can install it from [PowerShell gallery](https://www.powershellgallery.com/p
 Install-Module -Name TerraformUtil
 ```
 
-## Functions
+## TFAlias Functions
 
 ### Set-TFAlias
 
@@ -71,7 +71,6 @@ terraform {
 }
 ```
 
-
 ### Get-TFInstalledAlias
 
 Get installed `terraform` alias.
@@ -95,6 +94,15 @@ Uninstall `terraform` alias.
 C:\ > Uninstall-TFAlias -Version 1.2.3
 Uninstall Terraform v1.2.3
 ```
+
+## TFAlias for Command Prompt
+
+> **Note**  
+> This is experimental feature, no support.
+
+* [[Experimental] TFAlias for Command Prompt](./TFAliasForCmd.md)
+
+## Other Functions
 
 ### Register-TFArgumentCompleter
 
