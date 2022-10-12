@@ -37,8 +37,9 @@ if (-not [string]::IsNullOrEmpty($testPath)) {
         Write-Warning '.terraform-version is detected, but failed to parse.'
     } else {
         if ($currentVersion -ne $fileVersion) {
-            Write-Verbose ('Preferred version.{0} is detected from {1}.' -f $fileVersion, ([System.IO.Path]::Join($testPath, '.terraform-version')))
-            Set-TFAlias -Version $fileVersion
+            Write-Warning ('Preferred version.{0} is detected from {1}.' -f $fileVersion, ([System.IO.Path]::Join($testPath, '.terraform-version')))
+            Write-Warning ('Override version {0} to {1}' -f $currentVersion, $fileVersion)
+            Set-TFAlias -Version $fileVersion -Force
             $currentVersion = $fileVersion
         }
     }
