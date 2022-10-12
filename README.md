@@ -53,19 +53,19 @@ Set-TFAlias supports [.terraform-version](https://github.com/tfutils/tfenv#terra
 
 * [min-required & latest-allowed](https://github.com/tfutils/tfenv#min-required--latest-allowed)
 
-```powershell
-# min-required
+```terraform
+// min-required
 
-# tfenv detect 0.12.3, but Set-TFAlias detect 0.10.0
+// tfenv detect 0.12.3, but Set-TFAlias detect 0.10.0
 terraform {
   required_version  = "<0.12.3, >= 0.10.0"
 }
 ```
 
-```powershell
-# latest-allowed
+```terraform
+// latest-allowed
 
-# tfenv raise error, but Set-TFAlias detect 0.12.2
+// tfenv raise error, but Set-TFAlias detect 0.12.2
 terraform {
   required_version  = "<0.12.3, >= 0.10.0"
 }
