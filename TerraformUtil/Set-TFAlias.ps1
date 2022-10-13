@@ -48,10 +48,11 @@ function ShowHelpMessage () {
 Set the "terraform" alias like tfenv
 
 Usage:
-  -Initialize         Setup TFAlias environment
-  -Latast             Set alias to the latest Terraform version
-  -Version X.Y.Z      Set alias to Terraform ver.X.Y.Z
-  -Help               Show this message
+  -Initialize      Setup TFAlias environment
+  -Latast          Set alias to the latest Terraform version
+  -Version X.Y.Z   Set alias to Terraform ver.X.Y.Z
+  -Pin             Write the current version to .terraform-version file
+  -Help            Show this message
 
 Example:
   PS > Set-TFAlias -Initialize     # Initialize alias
