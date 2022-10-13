@@ -1,6 +1,26 @@
 <#
 .SYNOPSIS
     Set the "terraform" alias like tfenv
+.PARAMETER Initialize
+    Setup TFAlias environment
+.PARAMETER Latest
+    Set alias to the latest Terraform version
+.PARAMETER Version
+    Set alias to Terraform ver.X.Y.Z
+.PARAMETER Pin
+    Write the current version to .terraform-version file
+.PARAMETER Help
+     Show help message
+.EXAMPLE
+    PS > Set-TFAlias -Initialize     # Initialize alias
+
+    PS > Set-TFAlias -Latast         # Download latest version and set alias
+    PS > terraform version
+    Terraform vX.Y.Z
+
+    PS > Set-TFAlias -Version 1.2.3  # Download ver.1.2.3 and set alias
+    PS > terraform version
+    Terraform v1.2.3
 #>
 function Set-TFAlias {
     [CmdletBinding(DefaultParameterSetName = 'Help')]
