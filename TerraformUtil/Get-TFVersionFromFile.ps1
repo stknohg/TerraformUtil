@@ -101,8 +101,8 @@ function ParseTerraformRequiredVersion ([string]$RawString) {
                 switch ($Matches.match_op) {
                     '=' {
                         [PSCustomObject]@{
-                            Operator   = ($Matches.match_op)
-                            Value      = ($Matches.match_ver)
+                            Operator   = $Matches.match_op
+                            Value      = $Matches.match_ver
                             MinVersion = [semver]($Matches.match_ver)
                             MaxVersion = [semver]($Matches.match_ver)
                         }
@@ -110,8 +110,8 @@ function ParseTerraformRequiredVersion ([string]$RawString) {
                     }
                     '>=' {
                         [PSCustomObject]@{
-                            Operator   = ($Matches.match_op)
-                            Value      = ($Matches.match_ver)
+                            Operator   = $Matches.match_op
+                            Value      = $Matches.match_ver
                             MinVersion = [semver]($Matches.match_ver)
                             MaxVersion = $allVersions[0]
                         }
@@ -119,8 +119,8 @@ function ParseTerraformRequiredVersion ([string]$RawString) {
                     }
                     '<=' {
                         [PSCustomObject]@{
-                            Operator   = ($Matches.match_op)
-                            Value      = ($Matches.match_ver)
+                            Operator   = $Matches.match_op
+                            Value      = $Matches.match_ver
                             MinVersion = [semver]$allVersions[-1]
                             MaxVersion = [semver]($Matches.match_ver)
                         }
@@ -128,21 +128,20 @@ function ParseTerraformRequiredVersion ([string]$RawString) {
                     }
                     '~>' {
                         $v = $Matches.match_ver.Substring(0, $Matches.match_ver.LastIndexOf('.'))
-                        $tempVersions = $allVersions.Where( { $_ -ge "$($Matches.match_ver)" -and $_ -like "${v}.*" } )
+                        $tempVersions = $allVersions.Where({ $_ -ge "$($Matches.match_ver)" -and $_ -like "${v}.*" })
                         [PSCustomObject]@{
-                            Operator   = ($Matches.match_op)
-                            Value      = ($Matches.match_ver)
-                            MinVersion = [semver]($tempVersions[-1])
-                            MaxVersion = [semver]($tempVersions[0])
+                            Operator   = $Matches.match_op
+                            Value      = $Matches.match_ver
+                            MinVersion = [semver]$tempVersions[-1]
+                            MaxVersion = [semver]$tempVersions[0]
                         }
                         break
                     }
                     '<' {
-                        $tempVersions = $allVersions.Where( { $_ -lt "$($Matches.match_ver)" } )
+                        $tempVersions = $allVersions.Where({ $_ -lt "$($Matches.match_ver)" })
                         [PSCustomObject]@{
-                            
-                            Operator   = ($Matches.match_op)
-                            Value      = ($Matches.match_ver)
+                            Operator   = $Matches.match_op
+                            Value      = $Matches.match_ver
                             MinVersion = [semver]$allVersions[-1]
                             MaxVersion = [semver]$tempVersions[0]
                         }
@@ -164,7 +163,6 @@ function ParseTerraformRequiredVersion ([string]$RawString) {
             Default {
                 # No matched : treat as "="
                 try {
-                    # Value must be string to validate ~> operator
                     $tempVer = [semver]($str)
                     [PSCustomObject]@{
                         Operator   = '='
