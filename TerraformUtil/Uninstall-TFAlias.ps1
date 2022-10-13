@@ -35,10 +35,14 @@ function Uninstall-TFAlias {
         Writeinfo ('Uninstall Terraform v{0}' -f $Version)
         # remove directory
         Remove-Item -LiteralPath $versionPath -Recurse -ErrorAction SilentlyContinue
-        # remove alias
+        # remove version file when current version removed.
         if ($currentAlias -and $currentAlias.Version -eq $Version) {
-            Write-Verbose "Remove version file."
+            Write-Verbose "Remove current version file."
             UninstallVersionFile
+            # To prevent auto-completer shows warning message, need UnRegister-TFArgumentCompleter.
+            # ( Auto-completer shows "Failed to find current Terraform vesion." )
+            Write-Verbose "Unregister auto-complete"
+            UnRegister-TFArgumentCompleter
         }
     }
 }
