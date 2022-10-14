@@ -227,7 +227,7 @@ Save-TFLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
 # Step 1. Uninstall module
 Uninstall-Module TerraformUtil -Force
 
-# Step 2.
+# Step 2. Remove "terraform" alias
 Remove-Alias terraform
 
 # Step 3. Remove "$HOME\.tfenv" directory
