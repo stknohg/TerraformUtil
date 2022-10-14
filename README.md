@@ -13,14 +13,29 @@ PowerShell utility functions for [Terraform](https://www.terraform.io/).
 You can install it from [PowerShell gallery](https://www.powershellgallery.com/packages/TerraformUtil/).
 
 ```powershell
-Install-Module -Name TerraformUtil
+Install-Module -Name TerraformUtil -Force
 ```
 
 ## TFAlias Functions
 
+This module provides functionality equivalent to [tfenv](https://github.com/tfutils/tfenv).  
+
+### Comparison table
+
+|tfenv|TerraformUtil|notes|
+|----|----|----|
+|tfenv install|Set-TFAlias|Set-TFAlias automatically install Terraform|
+|tfenv use|Set-TFAlias||
+|tfenv uninstall|Uninstall-TFAlias||
+|tfenv list|Get-TFInstalledAlias||
+|tfenv list-remote|Find-TFVersion|You can also use Find-TFRelease|
+|tfenv version-name|-|You can use `Get-TFInstalledAlias -Current` instead|
+|tfenv init|-|`Set-TFAlias -Initialize` is a similar function|
+|tfenv pin|Set-TFAlias||
+
 ### Set-TFAlias
 
-Set the `terraform` alias like [tfenv](https://github.com/tfutils/tfenv).   
+Set the `terraform` alias like tfenv.  
 
 ```powershell
 # Initialize and download the latest version Terraform
@@ -204,6 +219,19 @@ Save-TFLinterBinary -Latest -DestinationPath C:\hashicorp\terraform
 
 # Save the ver.0.40.0 binary file to "C:\hashicorp\terraform" folder
 Save-TFLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
+```
+
+## How to uninstall
+
+```powershell
+# Step 1. Uninstall module
+Uninstall-Module TerraformUtil -Force
+
+# Step 2.
+Remove-Alias terraform
+
+# Step 3. Remove "$HOME\.tfenv" directory
+Remove-Item -LiteralPath (Join-Path $HOME '.tfalias') -Recurse
 ```
 
 ## License
