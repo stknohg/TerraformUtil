@@ -92,7 +92,7 @@ function GetTerraformRequiredValue ([string]$RootPath) {
 
 # TODO : implement more formal parser
 function ParseTerraformRequiredVersion ([string]$RawString) {
-    $allVersions = Find-TFVersion
+    $allVersions = @(Find-TFVersion)
 
     # Get each expressions
     $expressions = foreach ($str in $RawString -split ',') {
@@ -130,7 +130,7 @@ function ParseTerraformRequiredVersion ([string]$RawString) {
                     }
                     '~>' {
                         $v = $Matches.match_ver.Substring(0, $Matches.match_ver.LastIndexOf('.'))
-                        $tempVersions = $allVersions.Where({ $_ -ge "$($Matches.match_ver)" -and $_ -like "${v}.*" })
+                        $tempVersions = @($allVersions.Where({ $_ -ge "$($Matches.match_ver)" -and $_ -like "${v}.*" }))
                         [PSCustomObject]@{
                             Operator   = $Matches.match_op
                             Value      = $Matches.match_ver
@@ -140,7 +140,7 @@ function ParseTerraformRequiredVersion ([string]$RawString) {
                         break
                     }
                     '<' {
-                        $tempVersions = $allVersions.Where({ $_ -lt "$($Matches.match_ver)" })
+                        $tempVersions = @($allVersions.Where({ $_ -lt "$($Matches.match_ver)" }))
                         [PSCustomObject]@{
                             Operator   = $Matches.match_op
                             Value      = $Matches.match_ver
@@ -150,7 +150,7 @@ function ParseTerraformRequiredVersion ([string]$RawString) {
                         break
                     }
                     '>' {
-                        $tempVersions = $allVersions.Where( { $_ -gt "$($Matches.match_ver)" } )
+                        $tempVersions = @($allVersions.Where( { $_ -gt "$($Matches.match_ver)" } ))
                         [PSCustomObject]@{
                             Operator   = ($Matches.match_op)
                             Value      = ($Matches.match_ver)
