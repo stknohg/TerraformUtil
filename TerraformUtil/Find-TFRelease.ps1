@@ -1,3 +1,5 @@
+#Requires -Version 7.0.0
+Set-StrictMode -Version 3.0
 <#
 .SYNOPSIS
     Find Terraform releases.
@@ -84,22 +86,23 @@ function ConvertResponseItemToObject ([PSCustomObject]$ResponseItem) {
     if (-not $ResponseItem) {
         return $null
     }
-    # convert to class
+    # convert to class 
+    # TryGetProperty -InputObject $ResponseItem -Name ''
     $obj = [TerraformRelease]::new()
     $obj.Name = $ResponseItem.name
     $obj.Version = [semver]$ResponseItem.version
-    $obj.PreRelease = $ResponseItem.is_prerelease
+    $obj.PreRelease = TryGetProperty -InputObject $ResponseItem -Name 'is_prerelease'
     $obj.State = $ResponseItem.status.state
-    $obj.Created = $ResponseItem.timestamp_created
-    $obj.Updated = $ResponseItem.timestamp_updated
-    $obj.LicenseClass = $ResponseItem.license_class
-    $obj.ChangeLogUrl = $ResponseItem.url_changelog
-    $obj.LicenseUrl = $ResponseItem.url_license
-    $obj.ProjectWebSiteUrl = $ResponseItem.url_project_website
-    $obj.DockerHubUrl = $ResponseItem.url_docker_registry_dockerhub
-    $obj.AmazonECRUrl = $ResponseItem.url_docker_registry_ecr
-    $obj.SourceRepositoryUrl = $ResponseItem.url_source_repository
-    $obj.SHA256SUMsUrl = $ResponseItem.url_shasums
+    $obj.Created = TryGetProperty -InputObject $ResponseItem -Name 'timestamp_created'
+    $obj.Updated = TryGetProperty -InputObject $ResponseItem -Name 'timestamp_updated'
+    $obj.LicenseClass = TryGetProperty -InputObject $ResponseItem -Name 'license_class'
+    $obj.ChangeLogUrl = TryGetProperty -InputObject $ResponseItem -Name 'url_changelog'
+    $obj.LicenseUrl = TryGetProperty -InputObject $ResponseItem -Name 'url_license'
+    $obj.ProjectWebSiteUrl = TryGetProperty -InputObject $ResponseItem -Name 'url_project_website'
+    $obj.DockerHubUrl = TryGetProperty -InputObject $ResponseItem -Name 'url_docker_registry_dockerhub'
+    $obj.AmazonECRUrl = TryGetProperty -InputObject $ResponseItem -Name 'url_docker_registry_ecr'
+    $obj.SourceRepositoryUrl = TryGetProperty -InputObject $ResponseItem -Name 'url_source_repository'
+    $obj.SHA256SUMsUrl = TryGetProperty -InputObject $ResponseItem -Name 'url_shasums'
     # set builds
     $obj.Builds = [System.Collections.Generic.List[TerraformReleaseBuild]]::new()
     foreach ($b in $ResponseItem.builds) {
@@ -111,4 +114,10 @@ function ConvertResponseItemToObject ([PSCustomObject]$ResponseItem) {
     }
     #
     return $obj
+}
+
+function TryGetProperty([PSObject]$InputObject, [string]$Name) {
+    if ($InputObject.PSobject.Properties.Where({$_.Name -eq $Name})) {
+        return $InputObject.$Name
+    }
 }

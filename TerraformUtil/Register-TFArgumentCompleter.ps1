@@ -1,3 +1,4 @@
+Set-StrictMode -Version 3.0
 <#
 .SYNOPSIS
     Register PowerShell completer for Terraform.

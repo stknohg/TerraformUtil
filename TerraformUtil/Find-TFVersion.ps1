@@ -1,3 +1,5 @@
+#Requires -Version 7.0.0
+Set-StrictMode -Version 3.0
 # Simple cache
 $global:g_FTFV_CACHE_MINUTES = 10
 $global:g_FTFV_CACHE = [PSCustomObject]@{

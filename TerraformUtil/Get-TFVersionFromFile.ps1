@@ -1,3 +1,5 @@
+#Requires -Version 7.0.0
+Set-StrictMode -Version 3.0
 <#
 .SYNOPSIS
     Get Terraform version from ".terraform-version" file.

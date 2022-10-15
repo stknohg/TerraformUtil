@@ -11,7 +11,7 @@ InModuleScope 'TerraformUtil' {
     Describe "Find-TFVersion unit tests" {
         It "Should get the latest version" {
             $actual = Find-TFRelease -Latest
-            $actual.Count | Should -Be 1
+            @($actual).Count | Should -Be 1
             $actual.Version | Should -Be $LATEST_VERSION
         }
 
@@ -33,7 +33,7 @@ InModuleScope 'TerraformUtil' {
 
         It "Should return collect single version with -Filter Parameter" {
             $actual = Find-TFVersion -Filter { $_ -gt '1.2.3' -and $_ -lt '1.2.5' }
-            $actual.Count | Should -Be 1
+            @($actual).Count | Should -Be 1
             $actual | Should -Be '1.2.4'
         }
     }

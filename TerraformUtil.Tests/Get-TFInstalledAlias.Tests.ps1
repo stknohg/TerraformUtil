@@ -36,7 +36,7 @@ InModuleScope 'TerraformUtil' {
             Set-TFAlias -Version 1.2.5
             Set-TFAlias -Version 1.2.3
             $actual = Get-TFInstalledAlias -Current
-            $actual.Count | Should -Be 1
+            @($actual).Count | Should -Be 1
             $actual.Version |  Should -Be 1.2.3
         }
 
