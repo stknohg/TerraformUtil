@@ -237,7 +237,7 @@ plugin "aws" {
 
 # Use -Save parameter to save .tflint.hcl
 C:\Sample > Write-TFLinterHCL -Plugin AWS -Save
-Save configuration to ".tflnt.hcl".
+Save configuration to ".tflint.hcl".
 
 # Of cource you can use redirection.
 C:\Sample > Write-TFLinterHCL -Plugin AWS > '.tflint.hcl'

@@ -56,7 +56,7 @@ plugin "terraform" {
     }
 
     if ($Save) {
-        WriteInfo 'Save configuration to ".tflnt.hcl".'
+        WriteInfo 'Save configuration to ".tflint.hcl".'
         $content | Out-File -FilePath './.tflint.hcl'
         return
     }
