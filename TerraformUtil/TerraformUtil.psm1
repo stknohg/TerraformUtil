@@ -5,6 +5,7 @@
 . (Join-Path $PSScriptRoot 'Find-TFVersion.ps1')
 . (Join-Path $PSScriptRoot 'Get-TFVersionFromFile.ps1')
 . (Join-Path $PSScriptRoot 'Save-TFBinary.ps1')
+. (Join-Path $PSScriptRoot 'Save-TFSecBinary.ps1')
 . (Join-Path $PSScriptRoot 'Save-TFLinterBinary.ps1')
 . (Join-Path $PSScriptRoot 'Write-TFLinterHCL.ps1')
 . (Join-Path $PSScriptRoot 'Set-TFAlias.ps1')

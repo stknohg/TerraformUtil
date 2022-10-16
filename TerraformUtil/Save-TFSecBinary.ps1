@@ -2,9 +2,9 @@
 Set-StrictMode -Version 3.0
 <#
 .SYNOPSIS
-    Save the specific version tflint binary file.
+    Save the specific version tfsec binary file.
 #>
-function Save-TFLinterBinary {
+function Save-TFSecBinary {
     [CmdletBinding(DefaultParameterSetName = 'Latest')]
     param (
         [Parameter(ParameterSetName = 'Latest', Mandatory = $true)]
@@ -23,57 +23,50 @@ function Save-TFLinterBinary {
 
     # get the latest release information
     $response = if ($PSCmdlet.ParameterSetName -eq 'Version') {
-        InvokeGitHubReleaseAPI -Owner 'terraform-linters' -Repository 'tflint' -Release "v$Version"
+        InvokeGitHubReleaseAPI -Owner 'aquasecurity' -Repository 'tfsec' -Release "v$Version"
     } else {
-        InvokeGitHubReleaseAPI -Owner 'terraform-linters' -Repository 'tflint' -Release 'latest'
+        InvokeGitHubReleaseAPI -Owner 'aquasecurity' -Repository 'tfsec' -Release 'latest'
     }
     if (-not $response) {
-        Write-Error "Failed to get tflint release information."
+        Write-Error "Failed to get tfsec release information."
         return 
     }
 
     $versionTag = $response.tag_name
-    WriteInfo ("Find tflint {0}." -f $versionTag)
-    $downloadUrl = GetLinterBinaryUrlFromResponse -Response $response
+    WriteInfo ("Find tfsec {0}." -f $versionTag)
+    $downloadUrl = GetTFsecBinaryUrlFromResponse -Response $response
     if (-not $downloadUrl) {
         Write-Error "Failed to find download url."
         return
     }
     
-    # download and expand zip archive
-    $tempPath = GetTempPath
-    $zipFileName = $downloadUrl.split("/")[-1]
-    $zipFullPath = [System.IO.Path]::Join($tempPath, $zipFileName)
+    # download binary
+    $binaryFileName = if ($IsWindows) { 'tfsec.exe' } else { 'tfsec' }
+    $binaryFullPath = [System.IO.Path]::Join($DestinationPath, $binaryFileName)
     try {
-        # download
+        # download direct
         Write-Verbose ("Download {0}" -f ($downloadUrl))
-        Write-Verbose ("  to {0}" -f ($zipFullPath))
+        Write-Verbose ("  to {0}" -f ($binaryFullPath))
         $client = $null
         try {
             $client = [System.Net.WebClient]::new() 
-            $client.DownloadFile($downloadUrl, $zipFullPath)
+            $client.DownloadFile($downloadUrl, $binaryFullPath)
         } finally {
             $client.Dispose()
         }
-        # expand
-        Write-Verbose ("Expand {0} to {1}" -f $zipFileName, $DestinationPath)
-        Expand-Archive -LiteralPath $zipFullPath -DestinationPath $DestinationPath -Force
         # chmod 
         if (-not $IsWindows) {
-            Write-Verbose ("chmod +x {0}" -f (Join-Path $DestinationPath 'tflint'))
-            chmod +x (Join-Path $DestinationPath 'tflint')
+            Write-Verbose ("chmod +x {0}" -f $binaryFullPath)
+            chmod +x $binaryFullPath
         }
         # success
         WriteInfo ("Binary file is saved to {0}" -f $DestinationPath)
-    } finally {
-        if (Test-Path -LiteralPath $zipFullPath -PathType Leaf) {
-            Write-Verbose ("Remove {0}" -f $zipFullPath)
-            Remove-Item -LiteralPath $zipFullPath
-        }
+    } catch {
+        Write-Error $_
     }
 }
 
-function GetLinterBinaryUrlFromResponse ($Response) {
+function GetTFsecBinaryUrlFromResponse ($Response) {
     # get OS name
     $osName = if ($IsMacOS) { 'darwin' } elseif ($IsLinux) { 'linux' } else { 'windows' }
     Write-Verbose ("OS : {0}" -f $osName)
@@ -96,6 +89,6 @@ function GetLinterBinaryUrlFromResponse ($Response) {
     }
     Write-Verbose ("CPU Archetecture : {0}" -f $cpuArchitecture)
     
-    $queryString = "^.+${osName}_${cpuArchitecture}.zip$"
+    $queryString = "^.+tfsec-${osName}-${cpuArchitecture}(.exe)*$"
     return $response.assets.browser_download_url | Where-Object { $_ -match $queryString }
 }

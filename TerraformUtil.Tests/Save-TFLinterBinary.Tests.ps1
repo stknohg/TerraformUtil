@@ -14,13 +14,13 @@ InModuleScope 'TerraformUtil' {
 
         It "Should get single proper binary file when -Version parameter specified" {
             Save-TFLinterBinary -Version 0.40.1 -DestinationPath $TestDrive -ErrorAction Stop
-            Test-Path -LiteralPath "$TestDrive\tflint.exe" | Should -BeTrue
+            Test-Path -LiteralPath "$TestDrive\tflint.exe" -PathType Leaf | Should -BeTrue
             Test-Path -LiteralPath "$env:TEMP\tflint_windows_amd64.zip" | Should -BeFalse
         }
     
         It "Should get single proper binary file when -Latest parameter specified" {
             Save-TFLinterBinary -Latest -DestinationPath $TestDrive -ErrorAction Stop
-            Test-Path -LiteralPath "$TestDrive\tflint.exe" | Should -BeTrue
+            Test-Path -LiteralPath "$TestDrive\tflint.exe" -PathType Leaf | Should -BeTrue
             Test-Path -LiteralPath "$env:TEMP\tflint_windows_amd64.zip" | Should -BeFalse
         }
     }

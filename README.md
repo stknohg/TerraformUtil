@@ -209,6 +209,18 @@ Save-TFBinary -Latest -DestinationPath C:\hashicorp\terraform
 Save-TFBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
 ```
 
+### Save-TFSecBinary
+
+Save the specific version [Terraform securiy scanner](https://github.com/aquasecurity/tfsec) file (`tfsec.exe` or `tfsec`).  
+
+```powershell
+# Save the latest binary file to "C:\hashicorp\terraform" folder
+Save-TFSecBinary -Latest -DestinationPath C:\hashicorp\terraform
+
+# Save the ver.1.23.3 binary file to "C:\hashicorp\terraform" folder
+Save-TFSecBinary -Version 1.23.3 -DestinationPath C:\hashicorp\terraform
+```
+
 ### Save-TFLinterBinary
 
 Save the specific version [linter](https://github.com/terraform-linters/tflint) binary file (`tflint.exe` or `tflint`).  
