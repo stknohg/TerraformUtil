@@ -3,6 +3,10 @@ Import-Module (Join-Path $RootPath 'TerraformUtil.psd1') -Force
 
 InModuleScope 'TerraformUtil' {
 
+    BeforeAll {
+        Push-Location $TestDrive
+    }
+
     Describe "Write-TFLinterHCL unit tests" {
         
         It "Should return porper value with -Plugin Terraform" {
@@ -13,6 +17,17 @@ plugin "terraform" {
 }
 '@
         }
+
+        It "Should be saved .tflint.hcl value with -Save parameter" {
+            { Write-TFLinterHCL -Plugin Terraform -Save -Verbose } | Should -Not -Throw
+            Test-Path -LiteralPath "$TestDrive\.tflint.hcl" -PathType Leaf | Should -BeTrue
+            Get-Content -LiteralPath "$TestDrive\.tflint.hcl" -Raw | Should -Be @'
+plugin "terraform" {
+  enabled = true
+  preset  = "recommended"
+}
+'@
+      }
 
         It "Should return porper value with -Plugin AWS" {
             Mock -CommandName Invoke-RestMethod -ParameterFilter {$Uri -eq 'https://api.github.com/repos/terraform-linters/tflint-ruleset-aws/releases/latest'} -MockWith { [PSCustomObject]@{tag_name = 'v0.12.3'} }
@@ -49,6 +64,10 @@ plugin "google" {
 }
 '@
         }
+    }
+
+    AfterAll {
+        Pop-Location
     }
 
 }

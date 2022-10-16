@@ -46,18 +46,19 @@ plugin "google" {{
             break
         }
         Default {
-            return @'
+            @'
 plugin "terraform" {
   enabled = true
   preset  = "recommended"
 }
 '@
+            break
         }
     }
 
     if ($Save) {
         WriteInfo 'Save configuration to ".tflint.hcl".'
-        $content | Out-File -FilePath './.tflint.hcl'
+        $content | Out-File -FilePath './.tflint.hcl' -NoNewline
         return
     }
     Write-Output $content
