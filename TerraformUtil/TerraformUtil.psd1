@@ -10,7 +10,7 @@
     NestedModules        = @('TerraformUtil.psm1')
     FunctionsToExport    = @('Register-TFArgumentCompleter', 'UnRegister-TFArgumentCompleter',
                              'Find-TFRelease', 'Find-TFVersion', 'Get-TFVersionFromFile',
-                             'Save-TFBinary', 'Save-TFLinterBinary',
+                             'Save-TFBinary', 'Save-TFLinterBinary', 'Write-TFLinterHCL',
                              'Set-TFAlias', 'Get-TFInstalledAlias', 'Uninstall-TFAlias')
     FormatsToProcess     = @('TerraformUtil.format.ps1xml')
     PrivateData = @{
