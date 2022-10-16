@@ -22,22 +22,10 @@ function Save-TFLinterBinary {
     }
 
     # get the latest release information
-    $uri = switch ($PSCmdlet.ParameterSetName) {
-        'Latest' {
-            'https://api.github.com/repos/terraform-linters/tflint/releases/latest'
-        }
-        'Version' {
-            "https://api.github.com/repos/terraform-linters/tflint/releases/tags/v$Version"
-        }
-    }
-    try {
-        Write-Verbose "Invoke-RestMethod to $uri"
-        $response = Invoke-RestMethod -Uri $uri -Headers @{ Accept = 'application/vnd.github.v3+json' }
-    } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-        Write-Warning ("StatusCode : {0} {1}" -f [int]$_.Exception.Response.StatusCode, $_)
-    } catch {
-        Write-Error $_
-        return
+    $response = if ($PSCmdlet.ParameterSetName -eq 'Version') {
+        InvokeGitHubReleaseAPI -Owner 'terraform-linters' -Repository 'tflint' -Release "v$Version"
+    } else {
+        InvokeGitHubReleaseAPI -Owner 'terraform-linters' -Repository 'tflint' -Release 'latest'
     }
     if (-not $response) {
         Write-Error "Failed to get tflint release information."

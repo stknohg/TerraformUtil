@@ -65,25 +65,19 @@ plugin "terraform" {
 }
 
 function GetPluginLatestVersion ([string]$Plugin) {
-    $uri = switch ($Plugin) {
+    $response = switch ($Plugin) {
         'AWS' {
-            'https://api.github.com/repos/terraform-linters/tflint-ruleset-aws/releases/latest'
+            InvokeGitHubReleaseAPI -Owner 'terraform-linters' -Repository 'tflint-ruleset-aws' -Release 'latest'
+            break
         }
         'AzureRM' {
-            'https://api.github.com/repos/terraform-linters/tflint-ruleset-azurerm/releases/latest'
+            InvokeGitHubReleaseAPI -Owner 'terraform-linters' -Repository 'tflint-ruleset-azurerm' -Release 'latest'
+            break
         }
         'Google' {
-            'https://api.github.com/repos/terraform-linters/tflint-ruleset-google/releases/latest'
+            InvokeGitHubReleaseAPI -Owner 'terraform-linters' -Repository 'tflint-ruleset-google' -Release 'latest'
+            break
         }
-    }
-    try {
-        Write-Verbose "Invoke-RestMethod to $uri"
-        $response = Invoke-RestMethod -Uri $uri -Headers @{ Accept = 'application/vnd.github.v3+json' }
-    } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-        Write-Warning ("StatusCode : {0} {1}" -f [int]$_.Exception.Response.StatusCode, $_)
-    } catch {
-        Write-Error $_
-        return
     }
     if (-not $response) {
         Write-Error "Failed to get tflint rules release information."

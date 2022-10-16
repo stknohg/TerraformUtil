@@ -142,3 +142,21 @@ function GetTFAliasAppPath () {
 function GetTFAliasVersionFilePath () {
     return [System.IO.Path]::Join((GetTFAliasAppPath), 'version')
 }
+
+function InvokeGitHubReleaseAPI ([string]$Owner, [string]$Repository, [string]$Release) {
+    # -Release 'latast' treat as a special value.
+    $uri = if ('latest' -eq $Release) {
+        "https://api.github.com/repos/$Owner/$Repository/releases/latest"
+    } else {
+        "https://api.github.com/repos/$Owner/$Repository/releases/tags/$Release"
+    }
+    try {
+        Write-Verbose "Invoke-RestMethod to $uri"
+        return Invoke-RestMethod -Uri $uri -Headers @{ Accept = 'application/vnd.github.v3+json' }
+    } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+        Write-Warning ("StatusCode : {0} {1}" -f [int]$_.Exception.Response.StatusCode, $_)
+    } catch {
+        Write-Error $_
+        return
+    }
+}
