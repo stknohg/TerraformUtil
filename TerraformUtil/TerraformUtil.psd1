@@ -17,6 +17,7 @@
         PSData = @{
             LicenseUri = 'https://github.com/stknohg/TerraformUtil/blob/main/LICENSE'
             ProjectUri = 'https://github.com/stknohg/TerraformUtil'
+            Tags       = @('Terraform', 'tfenv', 'tflint', 'tfsec')
         } 
     } 
 }
