@@ -221,6 +221,28 @@ Save-TFLinterBinary -Latest -DestinationPath C:\hashicorp\terraform
 Save-TFLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
 ```
 
+### Write-TFLinterHCL
+
+Output a basic HCL configuration for .tflint.hcl.  
+`-Plugin` parameter supports [Terraform](https://github.com/terraform-linters/tflint), [AWS](https://github.com/terraform-linters/tflint-ruleset-aws), [AzureRM](https://github.com/terraform-linters/tflint-ruleset-azurerm), [Google](https://github.com/terraform-linters/tflint-ruleset-google).
+
+```powershell
+# Output configuration for terraform-provider-aws
+C:\Sample > Write-TFLinterHCL -Plugin AWS
+plugin "aws" {
+  enabled = true
+  version = "0.17.1" # set the latest version automatically.
+  source  = "github.com/terraform-linters/tflint-ruleset-aws"
+}
+
+# Use -Save parameter to save .tflint.hcl
+C:\Sample > Write-TFLinterHCL -Plugin AWS -Save
+Save configuration to ".tflnt.hcl".
+
+# Of cource you can use redirection.
+C:\Sample > Write-TFLinterHCL -Plugin AWS > '.tflint.hcl'
+```
+
 ## How to uninstall
 
 ```powershell
