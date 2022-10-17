@@ -20,12 +20,25 @@ if (-not [System.IO.File]::Exists($verFilePath)) {
     return 
 }
 $currentVersion = [semver]@([System.IO.File]::ReadAllLines($verFilePath))[0]
+Write-Verbose ('Detect currnent version : {0}' -f $currentVersion)
+
+# Check if -chdir parameter selected
+$chdirPath = ''
+$chdirArg = $args.Where({ $_.StartsWith('-chdir=') -and $_.Length -gt 7 }) | Select-Object -First 1 # Note : '-chdir='.Length = 7
+if ($chdirArg) {
+    try {
+        Write-Verbose ('-chdir parameter detect : {0}' -f $chdirArg)
+        $chdirPath = Resolve-Path -LiteralPath ($chdirArg.Substring(7)) -ErrorAction Stop | Select-Object -ExpandProperty Path
+    } catch {
+        Write-Warning ('Failed to parse -chdir parameter. ({0})' -f $_)
+    }
+}
 
 # Check .terraform-version file
 # Note.1 : tfenv searches .terraform-version in two phases, from $pwd recursively and from $HOME recursively.
 #          But terraform.ps1 does not search $HOME recursively, this is intentional.
 # Note.2 : Must use Test-Path to resolve relative path.
-$testPath = $pwd.Path
+$testPath = if (-not [string]::IsNullOrEmpty($chdirPath)) { $chdirPath } else { $pwd.Path }
 do {
     Write-Verbose ('Seacrh .terraform-version : {0}' -f $testPath)
     if (Test-Path -Path ([System.IO.Path]::Join($testPath, '.terraform-version')) -PathType Leaf) {
@@ -53,10 +66,12 @@ if (-not [string]::IsNullOrEmpty($testPath)) {
         }
     }
 }
+Write-Verbose ('Decided version : {0}' -f $currentVersion)
 
 # Get Terraform binary path
 $binaryName = if ($IsWindows) { 'terraform.exe' } else { 'terraform' }
 $binaryPath = [System.IO.Path]::Join($aliasAppPath, $currentVersion, $binaryName)
 
 # Invoke Terraform binary
+Write-Verbose ('Invoke terraform : {0}' -f $binaryPath)
 & "$binaryPath" $args
