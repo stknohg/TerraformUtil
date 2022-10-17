@@ -22,14 +22,23 @@ if (-not [System.IO.File]::Exists($verFilePath)) {
 $currentVersion = [semver]@([System.IO.File]::ReadAllLines($verFilePath))[0]
 
 # Check .terraform-version file
-# Note : must use Test-Path to resolve relative path.
+# Note.1 : tfenv searches .terraform-version in two phases, from $pwd recursively and from $HOME recursively.
+#          But terraform.ps1 does not search $HOME recursively, this is intentional.
+# Note.2 : Must use Test-Path to resolve relative path.
 $testPath = $pwd.Path
 do {
+    Write-Verbose ('Seacrh .terraform-version : {0}' -f $testPath)
     if (Test-Path -Path ([System.IO.Path]::Join($testPath, '.terraform-version')) -PathType Leaf) {
         break
     }
     $testPath = [System.IO.Path]::GetDirectoryName($testPath)
 } while (-not [string]::IsNullOrEmpty($testPath))
+if ([string]::IsNullOrEmpty($testPath)) {
+    Write-Verbose ('Seacrh .terraform-version : {0}' -f $HOME)
+    if (Test-Path -Path ([System.IO.Path]::Join($HOME, '.terraform-version')) -PathType Leaf) {
+        $testPath = $HOME
+    }
+}
 if (-not [string]::IsNullOrEmpty($testPath)) {
     Write-Verbose ('.terraform-version is detected at {0}' -f $testPath)
     $fileVersion = Get-TFVersionFromFile -LiteralPath ([System.IO.Path]::Join($testPath, '.terraform-version'))

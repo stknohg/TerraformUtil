@@ -231,13 +231,23 @@ function InstallTemplateFiles ([string]$Destination) {
 }
 
 function GetVersionFromVersionFile () {
+    # Note.1 : tfenv searches .terraform-version in two phases, from $pwd recursively and from $HOME recursively.
+    #          But terraform.ps1 does not search $HOME recursively, this is intentional.
+    # Note.2 : Must use Test-Path to resolve relative path.
     $testPath = $pwd.Path
     do {
+        Write-Verbose ('Seacrh .terraform-version : {0}' -f $testPath)
         if (Test-Path -Path ([System.IO.Path]::Join($testPath, '.terraform-version')) -PathType Leaf) {
             break
         }
         $testPath = [System.IO.Path]::GetDirectoryName($testPath)
     } while (-not [string]::IsNullOrEmpty($testPath))
+    if ([string]::IsNullOrEmpty($testPath)) {
+        Write-Verbose ('Seacrh .terraform-version : {0}' -f $HOME)
+        if (Test-Path -Path ([System.IO.Path]::Join($HOME, '.terraform-version')) -PathType Leaf) {
+            $testPath = $HOME
+        }
+    }
     # .terraform-version not found
     if ([string]::IsNullOrEmpty($testPath)) {
         Write-Verbose '.terraform-version not found'
