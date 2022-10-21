@@ -20,7 +20,7 @@ Usage:
   tfalias list-remote    List all installable versions
   tfalias uninstall      Uninstall a specific version of Terraform
   tfalias pin            Write the current version to .terraform-version file
-  tralias --version      Show version
+  tfalias --version      Show version
 
 Example
   C:\> tfalias use latest
