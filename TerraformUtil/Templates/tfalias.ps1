@@ -1,9 +1,9 @@
 #!/usr/bin/env pwsh
-#Requires -Version 5.0.0
+#Requires -Version 5.0
 Set-StrictMode -Version 3.0
 # Redirect Windows PowerShell to PowerShell 7
 if ($PSVersionTable.PSVersion.Major -le 5) {
-    pwsh -NonInteractive -NoProfile -Command "$($Script:MyInvocation.MyCommand.Path)" $args
+    pwsh -NonInteractive -NoProfile -Command "$($Script:MyInvocation.MyCommand.Path)" $script:args
     exit $LASTEXITCODE
 }
 <#
@@ -38,7 +38,7 @@ function ShowVersion () {
 }
 
 function Main () {
-    $command, $commandArgs = $args -split ' '
+    $command, $commandArgs = $script:args -split ' '
     if ($null -eq $command) {
         ShowHelp
         return
@@ -109,4 +109,4 @@ function Main () {
 }
 
 # Start main
-Main $args
+Main

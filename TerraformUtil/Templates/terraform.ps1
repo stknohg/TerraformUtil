@@ -1,14 +1,23 @@
 #!/usr/bin/env pwsh
-#Requires -Version 5.0.0
+#Requires -Version 5.0
 Set-StrictMode -Version 3.0
 # Redirect Windows PowerShell to PowerShell 7
 if ($PSVersionTable.PSVersion.Major -le 5) {
-    pwsh -NonInteractive -NoProfile -Command "$($Script:MyInvocation.MyCommand.Path)" $args
+    pwsh -NonInteractive -NoProfile -Command "$($Script:MyInvocation.MyCommand.Path)" $script:args
     exit $LASTEXITCODE
 }
 <#
     terraform.ps1 : Shim for terraform binary.
 #>
+function InvokeTerraform ([string]$AliasPath, [string]$Version) {
+    $binaryName = if ($IsWindows) { 'terraform.exe' } else { 'terraform' }
+    $binaryPath = [System.IO.Path]::Join($AliasPath, $Version, $binaryName)
+
+    Write-Verbose ('Invoke terraform : {0}' -f $binaryPath)
+    & "$binaryPath" $script:args
+    exit $LASTEXITCODE
+}
+
 $rootPath = [System.IO.Path]::GetDirectoryName($Script:MyInvocation.MyCommand.Path)
 $aliasAppPath = [System.IO.Path]::Join([System.IO.Path]::GetDirectoryName($rootPath), 'terraform')
 
@@ -22,9 +31,15 @@ if (-not [System.IO.File]::Exists($verFilePath)) {
 $currentVersion = [semver]@([System.IO.File]::ReadAllLines($verFilePath))[0]
 Write-Verbose ('Detect currnent version : {0}' -f $currentVersion)
 
+# If COMP_LINE environment variable is set for auto-completion, invoke terraform command immediately.
+if ($env:COMP_LINE) {
+    InvokeTerraform -AliasPath $aliasAppPath -Version $currentVersion
+    return
+}
+
 # Check if -chdir parameter selected
 $chdirPath = ''
-$chdirArg = $args.Where({ $_.StartsWith('-chdir=') -and $_.Length -gt 7 }) | Select-Object -First 1 # Note : '-chdir='.Length = 7
+$chdirArg = $script:args.Where({ $_.StartsWith('-chdir=') -and $_.Length -gt 7 }) | Select-Object -First 1 # Note : '-chdir='.Length = 7
 if ($chdirArg) {
     try {
         Write-Verbose ('-chdir parameter detect : {0}' -f $chdirArg)
@@ -68,10 +83,5 @@ if (-not [string]::IsNullOrEmpty($testPath)) {
 }
 Write-Verbose ('Decided version : {0}' -f $currentVersion)
 
-# Get Terraform binary path
-$binaryName = if ($IsWindows) { 'terraform.exe' } else { 'terraform' }
-$binaryPath = [System.IO.Path]::Join($aliasAppPath, $currentVersion, $binaryName)
-
-# Invoke Terraform binary
-Write-Verbose ('Invoke terraform : {0}' -f $binaryPath)
-& "$binaryPath" $args
+# Invoke Terraform
+InvokeTerraform -AliasPath $aliasAppPath -Version $currentVersion
