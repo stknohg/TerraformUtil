@@ -168,7 +168,7 @@ Version PreRelease State     Created              Updated
 `tfenv list-remote`コマンドと同様に `https://releases.hashicorp.com/terraform` をスクレイピングしてTerraformのバージョンリストを取得します。  
 
 > **Note**  
-> オリジンへのアクセスを制限するため結果は10分キャッシュされます  
+> オリジンへのアクセスを制限するため実行結果は10分キャッシュされます  
 
 ```powershell
 # 全バージョン取得 (デフォルトで降順)
@@ -179,7 +179,7 @@ Major  Minor  Patch  PreReleaseLabel BuildLabel
 1      3      2
 1      3      1
 1      3      0
-# ... snip ...
+# ... 中略 ...
 0      2      0
 0      1      1
 0      1      0
@@ -207,7 +207,7 @@ Version PreRelease State     Created             Updated
 # 最新バージョンのバイナリを "C:\hashicorp\terraform" フォルダに保存
 Save-TFBinary -Latest -DestinationPath C:\hashicorp\terraform
 
-# Ver.1.2.9のバイナリを "C:\hashicorp\terraform" フォルダに保存
+# Ver.1.2.9 のバイナリを "C:\hashicorp\terraform" フォルダに保存
 Save-TFBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
 ```
 
@@ -219,7 +219,7 @@ Save-TFBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
 # 最新バージョンのバイナリを "C:\hashicorp\terraform" フォルダに保存
 Save-TFSecBinary -Latest -DestinationPath C:\hashicorp\terraform
 
-# Ver.1.23.3のバイナリを "C:\hashicorp\terraform" フォルダに保存
+# Ver.1.23.3 のバイナリを "C:\hashicorp\terraform" フォルダに保存
 Save-TFSecBinary -Version 1.23.3 -DestinationPath C:\hashicorp\terraform
 ```
 
@@ -231,13 +231,13 @@ Save-TFSecBinary -Version 1.23.3 -DestinationPath C:\hashicorp\terraform
 # 最新バージョンのバイナリを "C:\hashicorp\terraform" フォルダに保存
 Save-TFLinterBinary -Latest -DestinationPath C:\hashicorp\terraform
 
-# Ver.0.40.0のバイナリを "C:\hashicorp\terraform" フォルダに保存
+# Ver.0.40.0 のバイナリを "C:\hashicorp\terraform" フォルダに保存
 Save-TFLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
 ```
 
 ### Write-TFLinterHCL
 
-基本的な`.tflint.hcl`ファイル向けの設定内容を出力します。  
+`.tflint.hcl`ファイル用の基本的な設定内容を出力します。  
 `-Plugin`パラメーターの値は [Terraform](https://github.com/terraform-linters/tflint), [AWS](https://github.com/terraform-linters/tflint-ruleset-aws),[AzureRM](https://github.com/terraform-linters/tflint-ruleset-azurerm), [Google](https://github.com/terraform-linters/tflint-ruleset-google) がサポートされています。  
 
 ```powershell
@@ -245,7 +245,7 @@ Save-TFLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
 C:\Sample > Write-TFLinterHCL -Plugin AWS
 plugin "aws" {
   enabled = true
-  version = "0.17.1" # set the latest version automatically.
+  version = "0.17.1" # 最新バージョンを自動的に設定
   source  = "github.com/terraform-linters/tflint-ruleset-aws"
 }
 
@@ -260,13 +260,13 @@ C:\Sample > Write-TFLinterHCL -Plugin AWS > '.tflint.hcl'
 ## アンインストール方法
 
 ```powershell
-# Step 1. モジュールをアンインストールします
+# 手順 1. モジュールをアンインストールします
 Uninstall-Module TerraformUtil -Force
 
-# Step 2. "terraform"エイリアスを削除します
+# 手順 2. "terraform"エイリアスを削除します
 Remove-Alias terraform
 
-# Step 3. "$HOME\.tfenv"ディレクトリを削除します
+# 手順 3. "$HOME\.tfenv"ディレクトリを削除します
 Remove-Item -LiteralPath (Join-Path $HOME '.tfalias') -Recurse
 ```
 
