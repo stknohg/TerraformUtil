@@ -4,6 +4,8 @@
 
 PowerShell utility functions for [Terraform](https://www.terraform.io/).  
 
+* [日本語](README-jp.md)
+
 ## Prerequisites
 
 * PowerShell 7 and later
