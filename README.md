@@ -35,7 +35,7 @@ This module provides functionality equivalent to [tfenv](https://github.com/tfut
 
 ### Set-TFAlias
 
-Set the `terraform` alias like tfenv.  
+Set `terraform` alias like tfenv.  
 
 ```powershell
 # Initialize and download the latest version Terraform
@@ -86,7 +86,7 @@ terraform {
 }
 ```
 
-You can write `.terraform-version` file using the `Set-TFAlias -Pin` command.  
+You can write `.terraform-version` file using `Set-TFAlias -Pin` command.  
 
 ```powershell
 # Pin .terraform-version file.
@@ -153,7 +153,7 @@ Get Terraform release information using [Hashicorp Releases API](https://release
 > Currently, no plans to implement pagenation.
 
 ```powershell
-# Get the latest release information
+# Get latest release information
 C:\ > Find-TFRelease -Latest
 
 Version PreRelease State     Created              Updated
@@ -166,7 +166,7 @@ Version PreRelease State     Created              Updated
 Get Terraform versions list by scraping `https://releases.hashicorp.com/terraform` same as `tfenv list-remote`.  
 
 > **Note**  
-> Result values is cached 10 minutes to restrict access to the origin.
+> Result values is cached 10 minutes to restrict access to origin.
 
 ```powershell
 # Get all versions (descending by default)
@@ -199,37 +199,37 @@ Version PreRelease State     Created             Updated
 
 ### Save-TFBinary
 
-Save the specific version Terraform binary file (`terraform.exe` or `terraform`).  
+Save a specific version Terraform binary file (`terraform.exe` or `terraform`).  
 
 ```powershell
 # Save the latest binary file to "C:\hashicorp\terraform" folder
 Save-TFBinary -Latest -DestinationPath C:\hashicorp\terraform
 
-# Save the ver.1.2.9 binary file to "C:\hashicorp\terraform" folder
+# Save ver.1.2.9 binary file to "C:\hashicorp\terraform" folder
 Save-TFBinary -Version 1.2.9 -DestinationPath C:\hashicorp\terraform
 ```
 
 ### Save-TFSecBinary
 
-Save the specific version [Terraform securiy scanner](https://github.com/aquasecurity/tfsec) file (`tfsec.exe` or `tfsec`).  
+Save a specific version [Terraform securiy scanner](https://github.com/aquasecurity/tfsec) file (`tfsec.exe` or `tfsec`).  
 
 ```powershell
 # Save the latest binary file to "C:\hashicorp\terraform" folder
 Save-TFSecBinary -Latest -DestinationPath C:\hashicorp\terraform
 
-# Save the ver.1.23.3 binary file to "C:\hashicorp\terraform" folder
+# Save ver.1.23.3 binary file to "C:\hashicorp\terraform" folder
 Save-TFSecBinary -Version 1.23.3 -DestinationPath C:\hashicorp\terraform
 ```
 
 ### Save-TFLinterBinary
 
-Save the specific version [linter](https://github.com/terraform-linters/tflint) binary file (`tflint.exe` or `tflint`).  
+Save a specific version [linter](https://github.com/terraform-linters/tflint) binary file (`tflint.exe` or `tflint`).  
 
 ```powershell
 # Save the latest linter binary file to "C:\hashicorp\terraform" folder
 Save-TFLinterBinary -Latest -DestinationPath C:\hashicorp\terraform
 
-# Save the ver.0.40.0 binary file to "C:\hashicorp\terraform" folder
+# Save ver.0.40.0 binary file to "C:\hashicorp\terraform" folder
 Save-TFLinterBinary -Version 0.40.0 -DestinationPath C:\hashicorp\terraform
 ```
 

@@ -2,7 +2,7 @@
 Set-StrictMode -Version 3.0
 <#
 .SYNOPSIS
-    Set the "terraform" alias like tfenv
+    Set "terraform" alias like tfenv
 .PARAMETER Initialize
     Setup TFAlias environment
 .PARAMETER Latest
@@ -10,7 +10,7 @@ Set-StrictMode -Version 3.0
 .PARAMETER Version
     Set alias to Terraform ver.X.Y.Z
 .PARAMETER Pin
-    Write the current version to .terraform-version file
+    Write current version to .terraform-version file
 .PARAMETER Help
      Show help message
 .EXAMPLE
@@ -67,13 +67,13 @@ function Set-TFAlias {
 
 function ShowHelpMessage () {
     @"
-Set the "terraform" alias like tfenv
+Set "terraform" alias like tfenv
 
 Usage:
   -Initialize      Setup TFAlias environment
   -Latast          Set alias to the latest Terraform version
   -Version X.Y.Z   Set alias to Terraform ver.X.Y.Z
-  -Pin             Write the current version to .terraform-version file
+  -Pin             Write current version to .terraform-version file
   -Help            Show this message
 
 Example:
@@ -180,7 +180,7 @@ function InvokeTFAliasVersion ([semver]$Version, [bool]$IsForce) {
     UpdateVersionFile -Version $Version
 
     # Set alias
-    Writeinfo ("Set the v{0} terraform alias." -f $Version)
+    Writeinfo ("Set v{0} terraform alias." -f $Version)
     DoSetAlias
 }
 
@@ -232,7 +232,7 @@ function InstallTemplateFiles ([string]$Destination) {
 
 function GetVersionFromVersionFile () {
     # Note.1 : tfenv searches .terraform-version in two phases, from $pwd recursively and from $HOME recursively.
-    #          But terraform.ps1 does not search $HOME recursively, this is intentional.
+    #          But this function does not search $HOME recursively, this is intentional.
     # Note.2 : Must use Test-Path to resolve relative path.
     $testPath = $pwd.Path
     do {
