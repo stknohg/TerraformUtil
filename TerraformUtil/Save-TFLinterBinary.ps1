@@ -83,7 +83,15 @@ function GetLinterBinaryUrlFromResponse ($Response) {
     # is arm
     if ($IsWindows) {
         if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') {
-            $cpuArchitecture = 'arm64'
+            if ([System.Environment]::OSVersion.Version -ge '10.0.22000') {
+                # Windows 11 on Arm : use x64 emulation
+                Write-Warning "tflint is not currently supported on Windows on Arm, so use amd64 binary instead."
+                $cpuArchitecture = 'amd64'
+            } else {
+                # Windows 10 on Arm : use x86 emulation
+                Write-Warning "tflint is not currently supported on Windows on Arm, so use i386 binary instead."
+                $cpuArchitecture = '386'
+            }
         }
     } else {
         if ((uname -m) -match '(arm64.*|aarch64.*)') {
