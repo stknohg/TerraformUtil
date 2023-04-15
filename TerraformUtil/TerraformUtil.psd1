@@ -7,7 +7,7 @@
     Copyright            = '(c) Takuya Shibata. All rights reserved.'
     Description          = 'PowerShell utility functions for Terraform.'
     PowerShellVersion    = '7.0.0'
-    NestedModules        = @('TerraformUtil.psm1')
+    RootModule           = 'TerraformUtil.psm1'
     FunctionsToExport    = @('Register-TFArgumentCompleter', 'UnRegister-TFArgumentCompleter',
                              'Find-TFRelease', 'Find-TFVersion', 'Get-TFVersionFromFile',
                              'Save-TFBinary', 'Save-TFSecBinary', 'Save-TFLinterBinary', 'Write-TFLinterHCL',
