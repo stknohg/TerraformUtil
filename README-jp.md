@@ -20,6 +20,10 @@ Install-Module -Name TerraformUtil -Force
 
 ## TFAlias Functions
 
+> [!CAUTION]  
+> `tenv`が非常に良いツールだったので将来的にこの機能は削除する予定です。  
+> * [tofuutils / tenv](https://github.com/tofuutils/tenv)
+
 このモジュールでは[tfenv](https://github.com/tfutils/tfenv)と同等の機能を提供しています。  
 
 ### 比較表
